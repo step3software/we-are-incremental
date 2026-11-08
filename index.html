@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11191c">
+  <meta name="description" content="Become the swarm. Assimilate each planet, evolve your lineage, and launch the next scout.">
+  <title>We Are Incremental</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <main id="origin-screen" class="origin-screen" aria-label="The first infection" hidden>
+    <div id="origin-layout" class="origin-layout">
+      <section class="origin-resource-panel" aria-label="Virus resources">
+        <div class="origin-content">
+          <div id="origin-virion-resource" class="origin-resource origin-virion-resource" role="group" tabindex="0" aria-label="Virions" aria-describedby="origin-virion-help">
+            <div class="origin-particle" aria-hidden="true"></div>
+            <output class="origin-number" id="origin-virions" aria-live="off">1</output>
+            <h1 class="origin-label" id="origin-virion-label">virion</h1>
+            <span id="origin-virion-help" class="sr-only"></span>
+          </div>
+          <div id="origin-cells" class="origin-cells origin-resource" role="group" tabindex="0" aria-label="Infected cells" aria-describedby="origin-cells-help" hidden>
+            <div class="origin-cell-count"><span>Infected cells</span><strong id="origin-infected-cells">0</strong></div>
+            <span id="origin-cells-help" class="sr-only"></span>
+          </div>
+        </div>
+      </section>
+      <section id="origin-skill-tree" class="origin-skill-tree" aria-label="Evolution skill tree" hidden>
+        <div class="evolution-workspace">
+          <div class="evolution-viewport" id="evolution-viewport" aria-label="Evolution graph">
+            <div class="evolution-world" id="evolution-world">
+              <svg id="evolution-edges" class="evolution-edges" viewBox="-760 -420 1520 840" width="1520" height="840" aria-hidden="true"></svg>
+              <div id="evolution-nodes" class="evolution-node-layer"></div>
+            </div>
+            <div class="evolution-tools" role="group" aria-label="Tree navigation">
+              <button type="button" id="evolution-zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+              <button type="button" id="evolution-zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
+              <button type="button" id="evolution-fit" aria-label="Fit tree" title="Fit tree">Fit</button>
+              <button type="button" id="evolution-center" aria-label="Center origin" title="Center origin">◎</button>
+              <button type="button" id="evolution-browse" aria-label="Browse skills" title="Browse skills">List</button>
+            </div>
+          </div>
+          <aside id="evolution-inspector" class="evolution-inspector" aria-label="Selected skill" hidden>
+            <h3 id="evolution-detail-title"></h3>
+            <p id="evolution-detail-state" class="evolution-detail-state"></p>
+            <p id="evolution-detail-description" class="evolution-detail-description"></p>
+            <button type="button" id="evolution-action" class="evolution-action" hidden>Evolve</button>
+          </aside>
+        </div>
+        <dialog id="evolution-node-list" class="evolution-list" aria-label="Browse skills">
+          <div class="evolution-list-header">
+            <h3>Skills</h3>
+            <button type="button" id="evolution-close-list" aria-label="Close skill list">Close</button>
+          </div>
+          <div id="evolution-browse-list" class="evolution-browse-list"></div>
+        </dialog>
+      </section>
+    </div>
+  </main>
+  <div class="app-shell" id="management-screen" hidden>
+    <header class="topbar">
+      <div class="identity">
+        <div class="glyph" aria-hidden="true">◉</div>
+        <div class="brand-group">
+          <div class="brand">WE ARE <span>INCREMENTAL</span></div>
+          <div class="tagline">ONE HIVE. INFINITE WORLDS.</div>
+        </div>
+      </div>
+      <div class="campaign" aria-label="Campaign progress">
+        <div><span>WORLD</span><strong id="world-number">01</strong></div>
+        <div><span>CONQUERED</span><strong id="worlds-completed">0</strong></div>
+        <div><span>STATUS</span><strong id="world-phase">Infiltrating</strong></div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="resources" aria-labelledby="resources-title">
+        <div class="column-heading"><h2 id="resources-title">Resources</h2><span class="live-indicator">● LIVE</span></div>
+        <div class="resource-group">
+          <div class="group-title">Planetary</div>
+          <div class="resource-row resource-explain" data-resource="hosts" tabindex="0" role="group" aria-describedby="resource-hosts-help"><span class="resource-name">Hosts</span><strong id="host-count">1 / 1,500</strong><span class="resource-rate positive" id="spread-rate">+0.04/s</span>
+          </div><span class="sr-only" id="resource-hosts-help"></span></div>
+          <div class="progress-track" id="takeover-progress" role="progressbar" aria-label="Assimilated planetary population" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="takeover-fill"></div></div>
+          <div class="resource-detail"><span>Planetary control</span><strong id="takeover-percent">0.1%</strong></div>
+          <div class="resource-row resource-explain" data-resource="biomass" tabindex="0" role="group" aria-describedby="resource-biomass-help"><span class="resource-name">Biomass</span><strong id="biomass-count">0</strong><span class="resource-rate positive" id="biomass-rate">+0.09/s</span>
+          </div><span class="sr-only" id="resource-biomass-help"></span></div>
+          <div class="resource-row resource-explain" data-resource="vigilance" tabindex="0" role="group" aria-describedby="resource-vigilance-help"><span class="resource-name">Vigilance</span><strong id="resistance-label">0%</strong><span class="resource-rate caution">THREAT</span>
+          </div><span class="sr-only" id="resource-vigilance-help"></span></div>
+        </div>
+        <div class="resource-group">
+          <div class="group-title">Swarm lineage</div>
+          <div class="resource-row resource-explain" data-resource="worlds" tabindex="0" role="group" aria-describedby="resource-worlds-help"><span class="resource-name">Worlds taken</span><strong id="lineage-worlds">0</strong><span class="resource-rate">TOTAL</span>
+          </div><span class="sr-only" id="resource-worlds-help"></span></div>
+          <div class="resource-row resource-explain" data-resource="genes" tabindex="0" role="group" aria-describedby="resource-genes-help"><span class="resource-name">Gene ranks</span><strong id="lineage-ranks">0</strong><span class="resource-rate">PERMANENT</span>
+          </div><span class="sr-only" id="resource-genes-help"></span></div>
+          <div class="lineage-summary" id="genome-list">No inherited adaptations yet.</div>
+        </div>
+        <div class="sidebar-tip">All numbers update as the hive grows. Planetary resources reset when a scout launches.</div>
+      </aside>
+
+      <section class="workspace" aria-label="Invasion controls">
+        <div class="tabs" role="tablist" aria-label="Game systems">
+          <button type="button" class="tab active" id="tab-invasion-button" data-tab="invasion" role="tab" aria-controls="tab-invasion" aria-selected="true" tabindex="0">Invasion</button>
+          <button type="button" class="tab" id="tab-lineage-button" data-tab="lineage" role="tab" aria-controls="tab-lineage" aria-selected="false" tabindex="-1">Lineage</button>
+          <button type="button" class="tab" id="tab-intel-button" data-tab="intel" role="tab" aria-controls="tab-intel" aria-selected="false" tabindex="-1">Planet Intel</button>
+        </div>
+
+        <section class="tab-panel" id="tab-invasion" role="tabpanel" aria-labelledby="tab-invasion-button">
+          <div class="planet-heading">
+            <div>
+              <div class="eyebrow">ACTIVE INVASION <span class="status-indicator" aria-hidden="true">●</span></div>
+              <h1 id="world-name">Hespera</h1>
+              <p id="world-epithet">The orchard world</p>
+            </div>
+            <div class="planet-summary">
+              <span>POPULATION</span><strong id="planet-population">1,500</strong>
+              <small id="planet-remaining">1,499 unassimilated</small>
+            </div>
+          </div>
+          <p class="planet-description" id="world-description">They are many. You are one borrowed body. Begin quietly.</p>
+
+          <div class="operations-grid">
+            <section class="module" aria-labelledby="field-title">
+              <div class="module-title"><h2 id="field-title">Transmission</h2><span>AUTOMATIC SPREAD</span></div>
+              <div class="action-row">
+                <div class="action-copy"><strong>Carriers spread the infection</strong><small>Infection expands on its own. Adapt your biology to influence its rate.</small></div>
+              </div>
+              <div class="info-line"><span>Passive recruitment</span><span id="passive-recruitment">+0.04 hosts / s</span></div>
+              <div class="info-line"><span>Local vigilance</span><span id="local-vigilance">0% alert</span></div>
+            </section>
+
+            <section class="module" aria-labelledby="upgrade-title">
+              <div class="module-title"><h2 id="upgrade-title">Brood Development</h2><span>PLANET-LOCAL</span></div>
+              <div class="upgrade-head"><span>ADAPTATION</span><span>LEVEL / COST</span></div>
+              <div id="upgrade-list" class="upgrade-list"></div>
+            </section>
+          </div>
+
+          <section class="module launch-module" aria-labelledby="launch-title">
+            <div class="module-title"><h2 id="launch-title">Interplanetary Propagation</h2><span>SCOUT PRESTIGE</span></div>
+            <div class="launch-layout">
+              <div class="launch-copy">
+                <strong>Grow a launch organism</strong>
+                <p id="launch-status">Assimilate 70% of this world to construct a scout launcher.</p>
+              </div>
+              <div class="launch-actions">
+                <button type="button" class="secondary-button" id="build-launcher" disabled>BUILD LAUNCHER</button>
+                <button type="button" class="primary-button" id="open-launch" disabled>LAUNCH SCOUT</button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="tab-lineage" role="tabpanel" aria-labelledby="tab-lineage-button" hidden>
+          <div class="page-heading"><h1>Lineage Memory</h1><p>Permanent evolution survives every launch. Your scout directive influences only the next world.</p></div>
+          <section class="module">
+            <div class="module-title"><h2>Inherited Adaptations</h2><span>PERMANENT</span></div>
+            <div id="gene-ledger" class="ledger-list"></div>
+          </section>
+          <section class="module">
+            <div class="module-title"><h2>Scout Directives</h2><span>NEXT PLANET ONLY</span></div>
+            <p class="section-description">Choose one directive each time you launch. Available directives expand with planetary conquests.</p>
+            <div id="directive-ledger" class="ledger-list"></div>
+            <p class="active-directive">Current directive: <strong id="current-directive">Pioneer scout</strong></p>
+          </section>
+        </section>
+
+        <section class="tab-panel" id="tab-intel" role="tabpanel" aria-labelledby="tab-intel-button" hidden>
+          <div class="page-heading"><h1>Planetary Intelligence</h1><p>Know the prey. Follow population control, vigilance, and launch readiness.</p></div>
+          <section class="module">
+            <div class="module-title"><h2>World Survey</h2><span>LIVE INTELLIGENCE</span></div>
+            <dl class="intel-ledger">
+              <div><dt>Planet</dt><dd id="intel-world">Hespera</dd></div>
+              <div><dt>Original population</dt><dd id="intel-population">1,500</dd></div>
+              <div><dt>Unassimilated hosts</dt><dd id="intel-remaining">1,499</dd></div>
+              <div><dt>Planetary vigilance</dt><dd id="intel-vigilance">0%</dd></div>
+              <div><dt>Current invasion phase</dt><dd id="intel-phase">Infiltrating</dd></div>
+              <div><dt>Launcher condition</dt><dd id="intel-launcher">Not grown</dd></div>
+              <div><dt>Transmission adaptation</dt><dd id="intel-transmission-skill">Inherited</dd></div>
+            </dl>
+          </section>
+          <section class="module">
+            <div class="module-title"><h2>Propagation Rules</h2><span>SCOUT CONSTRAINTS</span></div>
+            <p class="section-description">Control at least 70% of the world and supply biomass to grow the launch organism. Control 95% to launch a scout. Each launch resets local resources and grants a permanent gene rank and a next-world directive.</p>
+          </section>
+        </section>
+      </section>
+
+      <aside class="activity" aria-label="Objectives and events">
+        <section class="module activity-module" aria-labelledby="objective-title">
+          <div class="module-title"><h2 id="objective-title">Objectives</h2><span>THIS WORLD</span></div>
+          <ol class="objectives" id="objective-list"></ol>
+        </section>
+        <section class="module activity-module" aria-labelledby="events-title">
+          <div class="module-title"><h2 id="events-title">Swarm Activity</h2><span>THIS SESSION</span></div>
+          <ol class="event-list" id="event-log" aria-live="off"></ol>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <span>We Are Incremental · Local autosave · Browser prototype</span>
+      <button type="button" id="reset-game" class="text-button">Erase save</button>
+    </footer>
+  </div>
+
+  <div id="notice" role="status" aria-live="polite" class="notice" hidden></div>
+  <dialog id="scout-dialog" class="scout-dialog" aria-labelledby="scout-title">
+    <form id="scout-form">
+      <div class="eyebrow">PLANET SECURED · NEXT GENERATION</div>
+      <h2 id="scout-title">What will the next scout become?</h2>
+      <p class="dialog-intro">Select one permanent evolution and one directive for the next planet. Local hosts, biomass, and upgrades reset.</p>
+      <h3>Permanent evolution</h3>
+      <div id="gene-choices" class="choice-grid"></div>
+      <h3>Next-world directive</h3>
+      <div id="directive-choices" class="choice-grid"></div>
+      <div class="dialog-actions">
+        <button id="cancel-scout" type="button" class="secondary-button">NOT YET</button>
+        <button type="submit" class="primary-button">EVOLVE &amp; LAUNCH</button>
+      </div>
+    </form>
+  </dialog>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
