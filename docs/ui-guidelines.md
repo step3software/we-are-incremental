@@ -20,7 +20,7 @@ The project's user-selected UI inspiration is Evolve's **information-dense, text
 ## Implementation choices for WI-01
 
 - Initial virus stage: one centrally aligned **virion** count, no planetary panel, menus, buttons, upgrades, tabs, or resource bars. Infected-cell information appears only after the first cell is infected; the first actionable controls are **transmission skill nodes** revealed only when the carrier is infectious. There must be no separate Continue button.
-- After the infectious-carrier milestone, display a minimal branching skill tree: completed cellular milestones lead to two exclusive transmission adaptations, each with distinct consequences. Selecting one opens the later management interface; there is no generic transition button.
+- After the infectious-carrier milestone, display a **spatial skill tree** adapting [Crystal Craft's Study Tree](https://github.com/Wisteria-Psychological-Services/crystal-craft/blob/main/docs/design/study-tree-ui.md): quiet radial guide rings, authored nodes and perimeter-truncated edges, selected-node inspector, status rims, pan/zoom/fit/center controls, arrow-key navigation, and an accessible list of nodes. Cellular milestones form the learned trunk; exclusive transmission nodes branch from it. Selecting only inspects. The separate Evolve action commits the choice and opens planetary management; there is no generic Continue button.
 - After selecting a transmission adaptation, three-column layout at desktop width: **Resources | Game Systems | Objectives/Activity**.
 - Dark neutral background with modest green biological accents, but not Evolve's specific theme.
 - Tabs for **Invasion**, **Lineage**, and **Planet Intel**; no pseudo-tabs that don't change content.
@@ -34,3 +34,14 @@ The project's user-selected UI inspiration is Evolve's **information-dense, text
 ## Future constraints
 
 Follow Evolve's strengths—many useful choices in little space and numbers that explain themselves—while improving discoverability, touch usability, and accessible navigation. Do not imitate Evolve so closely that players mistake the game for a fork or adaptation. All visual assets and text must be original.
+
+## Evolution Tree adaptation from Crystal Craft
+
+**Inspected source:** Crystal Craft main branch at Wisteria-Psychological-Services/crystal-craft/src/components/study-tree/ (StudyTree.vue, StudyTreeNode.vue, StudyNodeDetail.vue, studyTreeLayout.ts, studyTreeAdapter.ts) and docs/design/study-tree-ui.md.
+
+- Stable polar node geometry and SVG links terminate at the actual node rim; quiet rings sit behind the real graph.
+- Learned (brass-like rim), available (bright steel), locked (dashed muted), selection (separate white outline), and keyboard focus (separate warm outline) have both visual and text indications.
+- Selection by click/keyboard never commits a skill; an enabled **Evolve** button in the inspector is the only commit command.
+- Drag empty canvas to pan, use wheel/pinch or toolbar to zoom, Fit to frame the graph, Center to return to Origin; browse nodes through an accessible alternative list. Node positions never change based on simulation time.
+- Camera fits once when the viewport becomes measurable; learning and periodic updates must not unexpectedly recenter the graph. Narrow screens put the scrollable inspector beneath the canvas.
+- The source uses Vue Flow, Vue and Quasar plus workshop art. This project ports the **interaction model and geometry** into dependency-free DOM/SVG, not Crystal Craft-specific assets or the framework.

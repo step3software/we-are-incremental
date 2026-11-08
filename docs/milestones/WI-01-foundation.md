@@ -7,7 +7,7 @@
 - Repository README, design authority, architecture and decisions.
 - Evolve-inspired, compact local web client with a persistent resource ledger, tabbed systems, grouped actions, and responsive layout (see docs/ui-guidelines.md).
 - Deterministic within-carrier viral simulation starting from one virion; infection, latency, production, decay and finite cells without click farming.
-- Unlock a data-driven evolution skill tree when the first carrier becomes infectious. Require a meaningful, exclusive transmission adaptation rather than a generic Continue button; then reveal biomass, upgrades, and vigilance.
+- Unlock a data-driven **spatial** evolution skill tree when the first carrier becomes infectious. Adapt Crystal Craft's authored radial connections, selection inspector, independent Evolve action, navigation and keyboard/list alternatives without adding dependencies. Require a meaningful, exclusive transmission adaptation rather than a generic Continue button; then reveal biomass, upgrades, and vigilance.
 - Planet takeover thresholds, launch organism, scout transition.
 - Permanent lineage gene choices and next-world scout directive choices.
 - Versioned local save, bounded offline progress and recovery from invalid saves.
@@ -30,3 +30,6 @@
 - The PR remains unmerged for owner review.
 
 **Implementation:** Proposed on feat/project-foundation; review and CI determine completion.
+
+- Graph selection, pan/zoom, browsing and focus must never commit evolution; only the guarded Evolve action does.
+- Camera fit occurs once when the node graph is measurable; expanding the game must not reset manual camera positioning.

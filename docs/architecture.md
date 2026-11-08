@@ -10,6 +10,9 @@ The prototype is a zero-dependency browser app running on JavaScript ES modules,
 | src/styles.css | Responsive presentation and reduced-motion support |
 | src/game.js | Pure simulation, phase gating, upgrade/world/trait definitions, progression and prestige |
 | src/viral.js | Deterministic within-carrier replication; latency, cell availability and virion production |
+| src/skills.js | Skill definitions and validated evolution choices |
+| src/evolutionTreeLayout.js | Pure authored radial geometry and UI graph-state adapter |
+| src/evolutionTreeView.js | DOM/SVG graph, camera gestures, keyboard navigation, selection inspector and explicit Evolve trigger |
 | src/skills.js | Data-driven first-generation evolution nodes, prerequisites, and simulation modifiers |
 | src/storage.js | Versioned save/restore with validation and capped offline progress |
 | src/main.js | Browser wiring, rendering, user input and periodic save |
@@ -46,3 +49,5 @@ Before shipping, add explicit schema migrations, export/import, storage diagnost
 ## Future scalability
 
 Move to a component framework or TypeScript when expanding UI/state complexity justifies the cost. Before extremely large populations and growth rates, adopt a deliberate large-number representation and formatter; standard JavaScript floating-point numbers are sufficient only for early gameplay. Simulation speed, prestige balancing, and offline integration will need scale tests as the game grows.
+
+The evolution camera, inspector selection and list dialog are transient UI state, never game save data. The graph derives learned/unlocked status from the canonical viral simulation and submits only a named skill id to beginTransmission in game.js. It adapts Crystal Craft's spatial Study Tree patterns without taking a dependency on its Vue Flow renderer.
