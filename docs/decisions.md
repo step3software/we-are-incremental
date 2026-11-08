@@ -7,6 +7,8 @@
 - Conquering a planet permits the construction and launch of another **scout**.
 - The next planet is a **prestige run** whose opening can be shaped by the player.
 - Power, abilities, and options **expand over successive planets**.
+- **First generation starts with exactly one virion inside one carrier.** Replication requires infection of cells, and spread is gradual and autonomous; no click-to-add-one.
+- **Opening UI is extremely minimal.** Initially, only the single virion is visible. Other resources and game controls remain hidden until earned by progression.
 
 ## Provisional choices for the first implementation
 
@@ -30,3 +32,10 @@ These choices make the prototype playable and do not claim final design approval
 7. **Technical evolution:** large-number model, save migrations, game engine/framework, hosting, and optional cloud saves.
 
 Keep uncertain design choices documented here until tested or explicitly decided; do not allow a quick prototype implementation to become an accidental permanent rule.
+
+## Opening-stage implementation decisions (provisional parameters)
+
+- The first carrier contains a simplified, finite cell pool. A free virion attaches to a cell, becomes latent, and only later yields new virions via productive cells. Virions are consumed by successful infections and cleared over time; infected cells can become exhausted.
+- An infectious viral load and infected-cell threshold unlock **Continue spreading**. This is a transition to a new scale of gameplay, not a button that adds virions or carriers.
+- Existing planetary simulation, upgrades and prestige remain available after this transition. Later-world scout openings currently skip the one-virion tutorial; scout biology itself is a future design decision.
+- Exact replication, latency, clearance, and transmission thresholds are fictionalized balance constants, not biological facts.

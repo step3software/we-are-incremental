@@ -9,7 +9,22 @@
   <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
-  <div class="app-shell">
+  <main id="origin-screen" class="origin-screen" aria-label="The first infection" hidden>
+    <div class="origin-content">
+      <div class="origin-particle" aria-hidden="true"></div>
+      <output class="origin-number" id="origin-virions" aria-live="off">1</output>
+      <h1 class="origin-label" id="origin-virion-label">virion</h1>
+      <div id="origin-cells" class="origin-cells" hidden>
+        <div class="origin-cell-count"><span>Infected cells</span><strong id="origin-infected-cells">0</strong></div>
+        <p id="origin-message" class="origin-message"></p>
+      </div>
+      <div class="origin-ready" id="origin-ready" hidden>
+        <p>The first carrier is infectious.</p>
+        <button type="button" id="origin-continue">Continue spreading</button>
+      </div>
+    </div>
+  </main>
+  <div class="app-shell" id="management-screen" hidden>
     <header class="topbar">
       <div class="identity">
         <div class="glyph" aria-hidden="true">◉</div>
@@ -78,10 +93,9 @@
 
           <div class="operations-grid">
             <section class="module" aria-labelledby="field-title">
-              <div class="module-title"><h2 id="field-title">Field Operations</h2><span>HOST ACQUISITION</span></div>
+              <div class="module-title"><h2 id="field-title">Transmission</h2><span>AUTOMATIC SPREAD</span></div>
               <div class="action-row">
-                <div class="action-copy"><strong>Assimilate host</strong><small>Take direct control of additional bodies.</small></div>
-                <button type="button" class="action-button" id="assimilate"><span>ASSIMILATE</span><strong id="assimilate-power">+1</strong></button>
+                <div class="action-copy"><strong>Carriers spread the infection</strong><small>Infection expands on its own. Adapt your biology to influence its rate.</small></div>
               </div>
               <div class="info-line"><span>Passive recruitment</span><span id="passive-recruitment">+0.04 hosts / s</span></div>
               <div class="info-line"><span>Local vigilance</span><span id="local-vigilance">0% alert</span></div>

@@ -1,30 +1,24 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  advance, assimilate, availableDirectives, availableGenes, buildLauncher, buyUpgrade,
+  advance, beginTransmission, availableDirectives, availableGenes, buildLauncher, buyUpgrade,
   canLaunch, createGame, getPlanet, getStats, launcherCost, launchScout, takeover, upgradeCost
 } from "../src/game.js";
 import { restore } from "../src/storage.js";
 
-test("first world begins with one host, no biomass, and a larger population", () => {
+test("first world begins with one virus in one carrier and no planetary biomass", () => {
   const state = createGame(1000);
+  assert.equal(state.stage, "viral");
+  assert.equal(state.viral.virions, 1);
   assert.equal(state.hosts, 1);
   assert.equal(state.biomass, 0);
   assert.ok(getPlanet(state).population > 1000);
 });
 
-test("assimilation produces hosts and biomass without exceeding planet population", () => {
-  let state = createGame();
-  state = assimilate(state);
-  assert.equal(state.hosts, 2);
-  assert.ok(state.biomass > 0);
-  state.hosts = getPlanet(state).population;
-  assert.equal(assimilate(state).hosts, state.hosts);
-});
-
-test("passive simulation grows even with no clicks and never exceeds planet population", () => {
-  const state = createGame();
+test("planetary infection spreads automatically without direct assimilation clicks", () => {
+  const state = createGame(1000, 1);
   const next = advance(state, 1800);
+  assert.equal(state.stage, "planetary");
   assert.ok(next.hosts > state.hosts);
   assert.ok(next.biomass > 0);
   assert.ok(next.hosts <= getPlanet(state).population);
@@ -88,7 +82,8 @@ test("offline advancement has a six-hour cap", () => {
   const result = restore(JSON.stringify(state), 1000 + 24 * 60 * 60 * 1000);
   assert.equal(result.offlineSeconds, 6 * 60 * 60);
   assert.equal(result.state.updatedAt, 1000 + 24 * 60 * 60 * 1000);
-  assert.ok(result.state.hosts <= getPlanet(state).population);
+  assert.equal(result.state.stage, "viral");
+  assert.ok(result.state.viral.virions >= 0);
 });
 
 test("malformed saved data recovers to a fresh game", () => {

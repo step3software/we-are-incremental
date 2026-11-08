@@ -10,14 +10,15 @@ Requirements: Node.js 20 or later. No dependencies to install.
 
 1. Run **npm run dev**.
 2. Open http://127.0.0.1:5173.
-3. Assimilate hosts, buy planetary upgrades, grow a launcher at 70% control, and launch at 95% control.
-4. Choose **one permanent gene** and **one next-world scout directive**. Repeat.
+3. Begin as **one virion inside one carrier**. Watch it enter a cell, replicate, and spread automatically; no clicking generates viruses. Once that carrier is infectious, continue to planetary transmission, where hosts spread passively.
+4. Buy planetary upgrades, grow a launcher at 70% control, and launch at 95% control.
+5. Choose **one permanent gene** and **one next-world scout directive**. Repeat.
 
 Progress is saved automatically in browser local storage, including up to six hours of offline progress. Use **Erase save** to restart.
 
 ## What is here
 
-This first vertical slice proves the complete loop: **infect → spread → take over → build → launch → evolve**. It includes four planetary archetypes in rotation, local upgrades, a simple vigilance modifier, persistent evolution, scout directives, and a responsive single-page interface.
+This first vertical slice begins with the extremely minimal **one-virion opening** (one carrier, delayed cellular infection and replication). Only a virion counter is visible initially. As the virus spreads, infected-cell information becomes visible; the larger Evolve-inspired management interface stays entirely hidden until the player chooses to expand beyond the infectious carrier. It then proves the loop: **infect → spread → take over → build → launch → evolve**. It includes four planetary archetypes in rotation, local upgrades, a simple vigilance modifier, persistent evolution, scout directives, and a responsive single-page interface.
 
 This is an early systems prototype, not a content-complete game. Planet politics, competing defenses, host abilities, alternative victory paths, balance, and endgame progression remain intentionally open for development.
 

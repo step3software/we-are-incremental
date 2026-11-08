@@ -1,9 +1,10 @@
 import {
-  UPGRADES, GENES, DIRECTIVES, advance, assimilate, availableDirectives, availableGenes,
+  UPGRADES, GENES, DIRECTIVES, advance, beginTransmission, availableDirectives, availableGenes,
   buildLauncher, buyUpgrade, canLaunch, createGame, getPlanet, getStats,
   launchScout, launcherCost, takeover, upgradeCost, TAKEOVER_TO_BUILD, TAKEOVER_TO_LAUNCH
 } from "./game.js";
 import { deleteSave, loadGame, saveGame } from "./storage.js";
+import { canTransmit, infectedCells } from "./viral.js";
 
 const element = id => document.getElementById(id);
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
@@ -194,7 +195,32 @@ function renderObjectives(portion) {
   }
 }
 
+function renderOrigin() {
+  const viral = state.viral;
+  const occupied = infectedCells(viral);
+  element("origin-virions").textContent = count(viral.virions);
+  element("origin-virion-label").textContent = viral.virions === 1 ? "virion" : "virions";
+
+  // Only the initial virion is visible on first load; details emerge naturally.
+  const hasInfected = occupied > 0 || viral.exhaustedCells > 0;
+  element("origin-cells").hidden = !hasInfected;
+  if (hasInfected) {
+    element("origin-infected-cells").textContent = count(occupied);
+    element("origin-message").textContent = viral.producingCells > 0
+      ? "Infected cells are producing new virions."
+      : "The virus has entered a cell.";
+  }
+  element("origin-ready").hidden = !canTransmit(viral);
+}
+
 function render() {
+  const isViral = state.stage === "viral";
+  element("origin-screen").hidden = !isViral;
+  element("management-screen").hidden = isViral;
+  if (isViral) {
+    renderOrigin();
+    return;
+  }
   const planet = getPlanet(state);
   const stats = getStats(state);
   const portion = takeover(state);
@@ -227,8 +253,6 @@ function render() {
   element("planet-remaining").textContent = count(remaining) + " unassimilated";
   element("passive-recruitment").textContent = "+" + rate(stats.spreadPerSecond) + " hosts / s";
   element("local-vigilance").textContent = vigilance + "% alert";
-  element("assimilate-power").textContent = "+" + count(Math.min(stats.clickHosts, remaining));
-  element("assimilate").disabled = portion >= 1;
 
   element("intel-world").textContent = planet.name;
   element("intel-population").textContent = count(planet.population);
@@ -307,10 +331,9 @@ function openScout() {
   element("scout-dialog").showModal();
 }
 
-element("assimilate").addEventListener("click", () => {
-  const first = state.hosts < 2;
-  act(assimilate);
-  if (first && state.hosts >= 2) recordEvent("The first host has been assimilated.");
+element("origin-continue").addEventListener("click", () => {
+  act(beginTransmission, "The first carrier can now transmit to others.");
+  if (state.stage === "planetary") selectTab("invasion");
 });
 element("build-launcher").addEventListener("click",
   () => act(buildLauncher, "The planetary launch organism has been grown."));

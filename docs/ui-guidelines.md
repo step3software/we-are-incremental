@@ -6,7 +6,7 @@ The project's user-selected UI inspiration is Evolve's **information-dense, text
 
 ## Layout principles
 
-1. **Persistent resource ledger.** Keep hosts, capacity, recruitment rate, biomass, production rate, vigilance, and lineage progression visible during all navigation. Put numerical stock and per-second rates in aligned columns.
+1. **Progressively revealed resource ledger.** On first load, show **only one virion** in a nearly empty view; keep other systems hidden until infectious transmission unlocks them. Once planetary gameplay begins, keep hosts, capacity, recruitment rate, biomass, production rate, vigilance, and lineage progression visible during navigation. Put numerical stock and per-second rates in aligned columns.
 2. **Compact, actionable workspace.** Use small grouped sections and obvious buttons with costs, levels, and disabled/available states. Prioritize buying, deploying, and evolving over decorative art.
 3. **Top-level systems navigation.** Tabs provide access to the current invasion, lineage evolution, and planet intelligence while resources remain visible; keyboard users can switch tabs with arrow keys.
 4. **Separate objectives and feedback.** Surface the next strategic gates and recent significant actions alongside the workspace. Don't bury important progression in modal dialogs.
@@ -19,7 +19,8 @@ The project's user-selected UI inspiration is Evolve's **information-dense, text
 
 ## Implementation choices for WI-01
 
-- Three-column layout at desktop width: **Resources | Game Systems | Objectives/Activity**.
+- Initial virus stage: one centrally aligned **virion** count, no planetary panel, menus, buttons, upgrades, tabs, or resource bars. Infected-cell information appears only after the first cell is infected; the first actionable control appears only when transmission is viable.
+- After the infectious-carrier milestone, three-column layout at desktop width: **Resources | Game Systems | Objectives/Activity**.
 - Dark neutral background with modest green biological accents, but not Evolve's specific theme.
 - Tabs for **Invasion**, **Lineage**, and **Planet Intel**; no pseudo-tabs that don't change content.
 - Compact resource rows show current/cap and production rate; a single slim bar conveys planetary control.

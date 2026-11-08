@@ -242,3 +242,74 @@ button:focus-visible, input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+
+/* Minimal origin: no menus, no currency rows and no premature planet controls. */
+.origin-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 32px 18px;
+  background: #11191c;
+}
+.origin-content {
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.origin-particle {
+  width: 12px;
+  height: 12px;
+  margin-bottom: 26px;
+  border: 2px solid #93d4b4;
+  border-radius: 50%;
+  background: #466b5d;
+  box-shadow: 0 0 0 5px #355b4d28, 0 0 28px #76c79d35;
+}
+.origin-number {
+  display: block;
+  color: var(--text);
+  font-size: clamp(54px, 12vw, 86px);
+  font-weight: 560;
+  letter-spacing: -.065em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.origin-label {
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 450;
+  letter-spacing: .015em;
+  margin: 9px 0 0;
+}
+.origin-cells {
+  width: 100%;
+  margin-top: 36px;
+  border-top: 1px solid #34464b;
+  padding-top: 18px;
+}
+.origin-cell-count {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.origin-cell-count strong { color: var(--accent); font-variant-numeric: tabular-nums; }
+.origin-message { font-size: 11px; color: var(--muted); margin: 12px 0 0; }
+.origin-ready { width: 100%; margin-top: 26px; }
+.origin-ready p { color: var(--text); font-size: 13px; margin: 0 0 12px; }
+.origin-ready button {
+  width: 100%;
+  background: #294138;
+  border: 1px solid #80b89d;
+  padding: 11px 16px;
+  border-radius: 4px;
+  color: var(--accent-strong);
+  font-size: 12px;
+  font-weight: 650;
+}
+.origin-ready button:hover { background: #39574c; }
