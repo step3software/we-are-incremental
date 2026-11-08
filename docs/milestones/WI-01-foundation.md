@@ -33,3 +33,7 @@
 
 - Graph selection, pan/zoom, browsing and focus must never commit evolution; only the guarded Evolve action does.
 - Camera fit occurs once when the node graph is measurable; expanding the game must not reset manual camera positioning.
+
+- The first infection screen contains no explanatory sentences, decorative headings, or generic progress text. The graphical tree appears to the **right** of resources on desktop, with **transparent, borderless panels**.
+- Virions, infected cells, and all later resource rows expose their producers, outputs and consumers through keyboard-accessible hover/focus details; quantitative rates come from simulation where available.
+- Intentional node selection shows actionable consequences; unselected inspector space does not contain placeholder copy.

@@ -10,48 +10,48 @@
 </head>
 <body>
   <main id="origin-screen" class="origin-screen" aria-label="The first infection" hidden>
-    <div class="origin-content">
-      <div class="origin-particle" aria-hidden="true"></div>
-      <output class="origin-number" id="origin-virions" aria-live="off">1</output>
-      <h1 class="origin-label" id="origin-virion-label">virion</h1>
-      <div id="origin-cells" class="origin-cells" hidden>
-        <div class="origin-cell-count"><span>Infected cells</span><strong id="origin-infected-cells">0</strong></div>
-        <p id="origin-message" class="origin-message"></p>
-      </div>
-      <section class="origin-skill-tree" id="origin-skill-tree" aria-labelledby="origin-skill-title" hidden>
-        <div class="evolution-heading">
-          <h2 id="origin-skill-title">Evolution</h2>
-          <p>One carrier. Two paths. Select a node to inspect its consequences.</p>
+    <div id="origin-layout" class="origin-layout">
+      <section class="origin-resource-panel" aria-label="Virus resources">
+        <div class="origin-content">
+          <div id="origin-virion-resource" class="origin-resource origin-virion-resource" role="group" tabindex="0" aria-label="Virions" aria-describedby="origin-virion-help">
+            <div class="origin-particle" aria-hidden="true"></div>
+            <output class="origin-number" id="origin-virions" aria-live="off">1</output>
+            <h1 class="origin-label" id="origin-virion-label">virion</h1>
+            <span id="origin-virion-help" class="sr-only"></span>
+          </div>
+          <div id="origin-cells" class="origin-cells origin-resource" role="group" tabindex="0" aria-label="Infected cells" aria-describedby="origin-cells-help" hidden>
+            <div class="origin-cell-count"><span>Infected cells</span><strong id="origin-infected-cells">0</strong></div>
+            <span id="origin-cells-help" class="sr-only"></span>
+          </div>
         </div>
+      </section>
+      <section id="origin-skill-tree" class="origin-skill-tree" aria-label="Evolution skill tree" hidden>
         <div class="evolution-workspace">
-          <div class="evolution-viewport" id="evolution-viewport" aria-label="Evolution skill tree">
+          <div class="evolution-viewport" id="evolution-viewport" aria-label="Evolution graph">
             <div class="evolution-world" id="evolution-world">
               <svg id="evolution-edges" class="evolution-edges" viewBox="-760 -420 1520 840" width="1520" height="840" aria-hidden="true"></svg>
               <div id="evolution-nodes" class="evolution-node-layer"></div>
             </div>
-            <div class="evolution-tools" role="group" aria-label="Skill tree navigation">
+            <div class="evolution-tools" role="group" aria-label="Tree navigation">
               <button type="button" id="evolution-zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
               <button type="button" id="evolution-zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
               <button type="button" id="evolution-fit" aria-label="Fit tree" title="Fit tree">Fit</button>
               <button type="button" id="evolution-center" aria-label="Center origin" title="Center origin">◎</button>
-              <button type="button" id="evolution-browse" aria-label="Browse discovered skills" title="Browse skills">List</button>
+              <button type="button" id="evolution-browse" aria-label="Browse skills" title="Browse skills">List</button>
             </div>
           </div>
-          <aside class="evolution-inspector" aria-label="Selected evolution node">
-            <div class="evolution-inspector-label">SELECTED NODE</div>
-            <h3 id="evolution-detail-title">Select an adaptation</h3>
+          <aside id="evolution-inspector" class="evolution-inspector" aria-label="Selected skill" hidden>
+            <h3 id="evolution-detail-title"></h3>
             <p id="evolution-detail-state" class="evolution-detail-state"></p>
-            <p id="evolution-detail-description" class="evolution-detail-description">Inspect a skill before evolving.</p>
+            <p id="evolution-detail-description" class="evolution-detail-description"></p>
             <button type="button" id="evolution-action" class="evolution-action" hidden>Evolve</button>
-            <p class="evolution-inspector-help">Selection never purchases. Your decision changes how the swarm spreads.</p>
           </aside>
         </div>
-        <dialog id="evolution-node-list" class="evolution-list" aria-label="Browse discovered skills">
+        <dialog id="evolution-node-list" class="evolution-list" aria-label="Browse skills">
           <div class="evolution-list-header">
-            <h3>Discovered skills</h3>
+            <h3>Skills</h3>
             <button type="button" id="evolution-close-list" aria-label="Close skill list">Close</button>
           </div>
-          <p>Select any node to inspect it in the tree.</p>
           <div id="evolution-browse-list" class="evolution-browse-list"></div>
         </dialog>
       </section>
@@ -78,26 +78,21 @@
         <div class="column-heading"><h2 id="resources-title">Resources</h2><span class="live-indicator">● LIVE</span></div>
         <div class="resource-group">
           <div class="group-title">Planetary</div>
-          <div class="resource-row">
-            <span class="resource-name">Hosts</span><strong id="host-count">1 / 1,500</strong><span class="resource-rate positive" id="spread-rate">+0.04/s</span>
-          </div>
+          <div class="resource-row resource-explain" data-resource="hosts" tabindex="0" role="group" aria-describedby="resource-hosts-help"><span class="resource-name">Hosts</span><strong id="host-count">1 / 1,500</strong><span class="resource-rate positive" id="spread-rate">+0.04/s</span>
+          </div><span class="sr-only" id="resource-hosts-help"></span></div>
           <div class="progress-track" id="takeover-progress" role="progressbar" aria-label="Assimilated planetary population" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="takeover-fill"></div></div>
           <div class="resource-detail"><span>Planetary control</span><strong id="takeover-percent">0.1%</strong></div>
-          <div class="resource-row">
-            <span class="resource-name">Biomass</span><strong id="biomass-count">0</strong><span class="resource-rate positive" id="biomass-rate">+0.09/s</span>
-          </div>
-          <div class="resource-row">
-            <span class="resource-name">Vigilance</span><strong id="resistance-label">0%</strong><span class="resource-rate caution">THREAT</span>
-          </div>
+          <div class="resource-row resource-explain" data-resource="biomass" tabindex="0" role="group" aria-describedby="resource-biomass-help"><span class="resource-name">Biomass</span><strong id="biomass-count">0</strong><span class="resource-rate positive" id="biomass-rate">+0.09/s</span>
+          </div><span class="sr-only" id="resource-biomass-help"></span></div>
+          <div class="resource-row resource-explain" data-resource="vigilance" tabindex="0" role="group" aria-describedby="resource-vigilance-help"><span class="resource-name">Vigilance</span><strong id="resistance-label">0%</strong><span class="resource-rate caution">THREAT</span>
+          </div><span class="sr-only" id="resource-vigilance-help"></span></div>
         </div>
         <div class="resource-group">
           <div class="group-title">Swarm lineage</div>
-          <div class="resource-row">
-            <span class="resource-name">Worlds taken</span><strong id="lineage-worlds">0</strong><span class="resource-rate">TOTAL</span>
-          </div>
-          <div class="resource-row">
-            <span class="resource-name">Gene ranks</span><strong id="lineage-ranks">0</strong><span class="resource-rate">PERMANENT</span>
-          </div>
+          <div class="resource-row resource-explain" data-resource="worlds" tabindex="0" role="group" aria-describedby="resource-worlds-help"><span class="resource-name">Worlds taken</span><strong id="lineage-worlds">0</strong><span class="resource-rate">TOTAL</span>
+          </div><span class="sr-only" id="resource-worlds-help"></span></div>
+          <div class="resource-row resource-explain" data-resource="genes" tabindex="0" role="group" aria-describedby="resource-genes-help"><span class="resource-name">Gene ranks</span><strong id="lineage-ranks">0</strong><span class="resource-rate">PERMANENT</span>
+          </div><span class="sr-only" id="resource-genes-help"></span></div>
           <div class="lineage-summary" id="genome-list">No inherited adaptations yet.</div>
         </div>
         <div class="sidebar-tip">All numbers update as the hive grows. Planetary resources reset when a scout launches.</div>

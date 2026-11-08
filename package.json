@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "test": "node --test",
-    "check": "node --check src/viral.js && node --check src/skills.js && node --check src/evolutionTreeLayout.js && node --check src/evolutionTreeView.js && node --check src/game.js && node --check src/storage.js && node --check src/main.js && node --check scripts/serve.mjs"
+    "check": "node --check src/viral.js && node --check src/game.js && node --check src/storage.js && node --check src/main.js && node --check scripts/serve.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   VIRAL_CELLS, VIRAL_LATENCY_SECONDS, advanceViral, canTransmit,
-  createViralState, healthyCells, infectedCells, validViralState
+  createViralState, healthyCells, infectedCells, viralResourceFlows, validViralState
 } from "../src/viral.js";
 import { advance, beginTransmission, createGame, getStats } from "../src/game.js";
 import { restore } from "../src/storage.js";
@@ -161,4 +161,19 @@ test("tampered saved transmission skills are rejected", () => {
   const bad = beginTransmission(advance(createGame(), 240), "covert");
   bad.transmissionSkill = "unknown";
   assert.equal(restore(JSON.stringify(bad)).recovered, true);
+});
+
+
+test("viral resource production and consumption rates are derived without mutating state", () => {
+  const original = createViralState();
+  const initial = viralResourceFlows(original);
+  assert.ok(initial.cellInfections > 0 && initial.cellInfections < 1);
+  assert.equal(initial.virionProduction, 0);
+  assert.ok(initial.virionClearance > 0);
+  assert.equal(initial.cellExhaustion, 0);
+  const developed = advanceViral(original, 40);
+  const flows = viralResourceFlows(developed);
+  assert.ok(flows.virionProduction > 0);
+  assert.ok(flows.cellExhaustion > 0);
+  assert.deepEqual(original, createViralState());
 });

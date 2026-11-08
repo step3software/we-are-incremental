@@ -1,8 +1,7 @@
 // The simulation is intentionally independent of the DOM and persistence layer.
-import { advanceViral, createViralState, validViralState } from "./viral.js";
-import { canAcquireTransmissionSkill, getTransmissionSkill } from "./skills.js";
+import { advanceViral, canTransmit, createViralState, validViralState } from "./viral.js";
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 2;
 export const MAX_OFFLINE_SECONDS = 6 * 60 * 60;
 export const TAKEOVER_TO_BUILD = 0.7;
 export const TAKEOVER_TO_LAUNCH = 0.95;
@@ -67,7 +66,6 @@ export function createGame(now = Date.now(), planetIndex = 0, lineage = { worlds
     planetIndex,
     stage: planetIndex === 0 && lineage.worlds === 0 ? "viral" : "planetary",
     viral: planetIndex === 0 && lineage.worlds === 0 ? createViralState() : null,
-    transmissionSkill: null,
     hosts: 1 + 2 * (Number(genes.seed) || 0) + (directive === "seedfall" ? 12 : 0),
     biomass: directive === "cache" ? 100 : 0,
     vigilance: directive === "siege" ? 25 : 0,
@@ -95,24 +93,23 @@ export function getStats(state) {
   const freeHosts = Math.max(0, planet.population - state.hosts);
   const vigilancePenalty = Math.max(0.2, 1 - state.vigilance / 135 - planet.vigilance * 0.35);
   const directiveBoost = state.directive === "veil" ? 1.2 : 1;
-  const chosenSkill = getTransmissionSkill(state.transmissionSkill);
   const spreadPerSecond = freeHosts <= 0 ? 0 :
     (state.hosts * 0.045 + state.upgrades.vectors * 1.2) *
     (1 + geneRank(state, "whisper") * 0.25) *
     (1 + state.upgrades.spores * 0.3 + geneRank(state, "rupture") * 0.2) *
-    directiveBoost * (chosenSkill?.spreadMultiplier ?? 1) * vigilancePenalty;
+    directiveBoost * vigilancePenalty;
   return {
     spreadPerSecond: Math.min(freeHosts, spreadPerSecond),
     biomassPerSecond: (state.hosts * 0.09 + state.upgrades.digesters * 1.1) *
       (1 + geneRank(state, "hunger") * 0.25),
     vigilanceMultiplier: Math.max(0.1, (1 - geneRank(state, "mimic") * 0.15) *
-      (state.directive === "veil" ? 0.5 : 1) * (chosenSkill?.vigilanceMultiplier ?? 1))
+      (state.directive === "veil" ? 0.5 : 1))
   };
 }
 
-export function beginTransmission(state, skillId) {
-  if (!canAcquireTransmissionSkill(state, skillId)) return state;
-  return { ...clone(state), stage: "planetary", viral: null, transmissionSkill: skillId };
+export function beginTransmission(state) {
+  if (state.stage !== "viral" || !canTransmit(state.viral)) return state;
+  return { ...clone(state), stage: "planetary", viral: null };
 }
 
 export function advance(state, seconds) {
@@ -209,23 +206,14 @@ function validCore(candidate) {
 
 export function validSave(candidate) {
   if (!validCore(candidate) || candidate.version !== SAVE_VERSION) return false;
-  if (candidate.transmissionSkill !== null &&
-      !getTransmissionSkill(candidate.transmissionSkill)) return false;
   if (candidate.stage === "viral") {
     return candidate.planetIndex === 0 && candidate.lineage.worlds === 0 &&
-      candidate.hosts === 1 && candidate.transmissionSkill === null &&
-      validViralState(candidate.viral);
+      candidate.hosts === 1 && validViralState(candidate.viral);
   }
   return candidate.stage === "planetary" && candidate.viral === null;
 }
 
 export function migrateLegacyGame(candidate) {
-  if (!validCore(candidate) || ![1, 2].includes(candidate.version)) return null;
-  return {
-    ...candidate,
-    version: SAVE_VERSION,
-    stage: candidate.version === 1 ? "planetary" : candidate.stage,
-    viral: candidate.version === 1 ? null : candidate.viral,
-    transmissionSkill: null
-  };
+  if (!validCore(candidate) || candidate.version !== 1) return null;
+  return { ...candidate, version: SAVE_VERSION, stage: "planetary", viral: null };
 }

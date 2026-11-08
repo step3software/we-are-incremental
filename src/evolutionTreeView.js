@@ -16,6 +16,7 @@ function svgElement(tag, attributes = {}) {
 
 export function createEvolutionTreeView(root, onAcquire) {
   const viewport = root.querySelector("#evolution-viewport");
+  const inspector = root.querySelector("#evolution-inspector");
   const world = root.querySelector("#evolution-world");
   const lines = root.querySelector("#evolution-edges");
   const nodeLayer = root.querySelector("#evolution-nodes");
@@ -29,7 +30,7 @@ export function createEvolutionTreeView(root, onAcquire) {
   const lineElements = [];
   const camera = { x: 0, y: 0, zoom: 1 };
   const pointers = new Map();
-  let selected = "infectious";
+  let selected = null;
   let model = null;
   let initiallyFitted = false;
   let fitScheduled = false;
@@ -117,11 +118,13 @@ export function createEvolutionTreeView(root, onAcquire) {
   }
   function renderInspector() {
     const node = model?.nodes.find(item => item.id === selected);
+    inspector.hidden = !node;
     if (!node) {
-      title.textContent = "Select an adaptation";
-      description.textContent = "Choose a node to inspect its effects.";
+      title.textContent = "";
+      description.textContent = "";
       stateText.textContent = "";
       action.hidden = true;
+      action.removeAttribute("data-skill");
       return;
     }
     title.textContent = node.name;
@@ -252,7 +255,8 @@ export function createEvolutionTreeView(root, onAcquire) {
   return {
     show(viral) { refresh(viral); },
     reset() {
-      selected = "infectious";
+      selected = null;
+      renderSelection();
       initiallyFitted = false;
       pointers.clear();
       scheduleFit();

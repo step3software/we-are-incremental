@@ -19,6 +19,9 @@ Build the incremental game described in [docs/game-design.md](docs/game-design.m
 - Avoid additional dependencies, frameworks, network services, or data collection without a clear demonstrated need.
 - The Evolution Tree layout/eligibility are pure derived data in src/evolutionTreeLayout.js; src/evolutionTreeView.js owns only DOM/SVG rendering, camera, selection, keyboard navigation, and the explicit Evolve action. Selecting/panning/zooming must never purchase or advance a node.
 - Prefer keyboard-accessible controls, meaningful labels, responsive layouts, and reduced-motion support.
+- **Standing UI copy rule:** Do not add explanatory headers, tutorials, filler, instructions, status sentences, or panel descriptions to the main game view unless essential to decide or act. Prefer minimal resource names, numbers and verbs; put optional explanations in concise mouse-hover/keyboard-focus tooltips with accessible text equivalents. Avoid new visible text by default.
+- **Origin layout:** after infection matures, show the evolution skill tree as the panel to the **right** of the virus resource column on desktop (stack on mobile); keep its canvas, workspace, and inspector surfaces transparent and borderless. The single-virion opening must remain visually quiet before that unlock.
+- Resource tooltips should disclose production, consumption, and the driver of each rate, using canonical simulation-derived values where feasible. Never invent a simulated cost or a gain that game rules do not support.
 - Do not let progression permanently deadlock; the player must retain a route to the next world.
 - Keep game numbers and balance tunable in central definitions rather than duplicating constants in the UI.
 - Test on Windows-compatible tooling. CI should not require Linux.

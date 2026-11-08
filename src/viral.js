@@ -99,6 +99,18 @@ export function advanceViral(current, seconds) {
   return next;
 }
 
+
+/** Informational per-second fluxes for resource tooltips (not simulation settlement). */
+export function viralResourceFlows(viral) {
+  const entering = Math.min(viral.virions * CONTACTS_PER_VIRION, viral.virions, healthyCells(viral));
+  return {
+    cellInfections: entering,
+    virionProduction: viral.producingCells * PRODUCTION_PER_CELL,
+    virionClearance: Math.max(0, viral.virions - entering) * FREE_VIRION_CLEARANCE,
+    cellExhaustion: viral.producingCells * PRODUCER_LOSS
+  };
+}
+
 export function validViralState(v) {
   if (!v || typeof v !== "object" || !Array.isArray(v.latent) ||
       v.latent.length !== VIRAL_LATENCY_SECONDS) return false;

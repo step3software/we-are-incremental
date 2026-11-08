@@ -7,9 +7,6 @@ const files = new Map([
   ["/src/main.js", ["../src/main.js", "text/javascript; charset=utf-8"]],
   ["/src/game.js", ["../src/game.js", "text/javascript; charset=utf-8"]],
   ["/src/viral.js", ["../src/viral.js", "text/javascript; charset=utf-8"]],
-  ["/src/skills.js", ["../src/skills.js", "text/javascript; charset=utf-8"]],
-  ["/src/evolutionTreeLayout.js", ["../src/evolutionTreeLayout.js", "text/javascript; charset=utf-8"]],
-  ["/src/evolutionTreeView.js", ["../src/evolutionTreeView.js", "text/javascript; charset=utf-8"]],
   ["/src/storage.js", ["../src/storage.js", "text/javascript; charset=utf-8"]],
   ["/src/styles.css", ["../src/styles.css", "text/css; charset=utf-8"]]
 ]);
