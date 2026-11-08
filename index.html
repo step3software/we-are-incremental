@@ -19,11 +19,41 @@
         <p id="origin-message" class="origin-message"></p>
       </div>
       <section class="origin-skill-tree" id="origin-skill-tree" aria-labelledby="origin-skill-title" hidden>
-        <h2 id="origin-skill-title">Evolution</h2>
-        <p class="origin-skill-intro">Your first carrier can transmit. Choose how the infection spreads.</p>
-        <ol class="origin-skill-history" id="origin-skill-history" aria-label="Completed adaptations"></ol>
-        <div class="origin-skill-fork" aria-hidden="true"></div>
-        <div class="origin-skill-choices" id="origin-skill-choices" role="group" aria-label="Choose a transmission adaptation"></div>
+        <div class="evolution-heading">
+          <h2 id="origin-skill-title">Evolution</h2>
+          <p>One carrier. Two paths. Select a node to inspect its consequences.</p>
+        </div>
+        <div class="evolution-workspace">
+          <div class="evolution-viewport" id="evolution-viewport" aria-label="Evolution skill tree">
+            <div class="evolution-world" id="evolution-world">
+              <svg id="evolution-edges" class="evolution-edges" viewBox="-760 -420 1520 840" width="1520" height="840" aria-hidden="true"></svg>
+              <div id="evolution-nodes" class="evolution-node-layer"></div>
+            </div>
+            <div class="evolution-tools" role="group" aria-label="Skill tree navigation">
+              <button type="button" id="evolution-zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+              <button type="button" id="evolution-zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
+              <button type="button" id="evolution-fit" aria-label="Fit tree" title="Fit tree">Fit</button>
+              <button type="button" id="evolution-center" aria-label="Center origin" title="Center origin">◎</button>
+              <button type="button" id="evolution-browse" aria-label="Browse discovered skills" title="Browse skills">List</button>
+            </div>
+          </div>
+          <aside class="evolution-inspector" aria-label="Selected evolution node">
+            <div class="evolution-inspector-label">SELECTED NODE</div>
+            <h3 id="evolution-detail-title">Select an adaptation</h3>
+            <p id="evolution-detail-state" class="evolution-detail-state"></p>
+            <p id="evolution-detail-description" class="evolution-detail-description">Inspect a skill before evolving.</p>
+            <button type="button" id="evolution-action" class="evolution-action" hidden>Evolve</button>
+            <p class="evolution-inspector-help">Selection never purchases. Your decision changes how the swarm spreads.</p>
+          </aside>
+        </div>
+        <dialog id="evolution-node-list" class="evolution-list" aria-label="Browse discovered skills">
+          <div class="evolution-list-header">
+            <h3>Discovered skills</h3>
+            <button type="button" id="evolution-close-list" aria-label="Close skill list">Close</button>
+          </div>
+          <p>Select any node to inspect it in the tree.</p>
+          <div id="evolution-browse-list" class="evolution-browse-list"></div>
+        </dialog>
       </section>
     </div>
   </main>

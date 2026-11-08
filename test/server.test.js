@@ -33,7 +33,7 @@ test("development server serves JS modules with a valid JavaScript MIME type", {
   });
 
   const origin = "http://127.0.0.1:" + port;
-  for (const pathname of ["/src/main.js", "/src/game.js", "/src/storage.js", "/src/viral.js", "/src/skills.js"]) {
+  for (const pathname of ["/src/main.js", "/src/game.js", "/src/storage.js", "/src/viral.js", "/src/skills.js", "/src/evolutionTreeLayout.js", "/src/evolutionTreeView.js"]) {
     const response = await fetch(origin + pathname);
     assert.equal(response.status, 200, pathname + " must be served");
     assert.match(response.headers.get("content-type") || "", /^text\/javascript\b/,

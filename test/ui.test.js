@@ -33,7 +33,7 @@ test("all functional tabs have labelled matching panels", () => {
 });
 
 test("scout choice controls and all gameplay actions remain available", () => {
-  for (const id of ["origin-screen", "origin-virions", "origin-skill-tree", "origin-skill-choices", "upgrade-list", "build-launcher", "open-launch",
+  for (const id of ["origin-screen", "origin-virions", "origin-skill-tree", "evolution-viewport", "evolution-nodes", "evolution-detail-title", "evolution-action", "upgrade-list", "build-launcher", "open-launch",
     "scout-form", "gene-choices", "directive-choices", "reset-game"]) {
     assert.ok(html.includes('id="' + id + '"'));
   }
@@ -49,11 +49,26 @@ test("first infection view is minimal and planetary controls remain hidden", () 
   assert.match(html, /id="origin-skill-tree"[^>]* hidden/);
   assert.doesNotMatch(html, /id="origin-continue"/);
   assert.doesNotMatch(html, /Continue spreading/);
-  assert.match(js, /createOriginSkillTree/);
+  assert.match(js, /createEvolutionTreeView/);
   assert.match(js, /canTransmit\(viral\)/);
   assert.doesNotMatch(html, /id="assimilate"/);
   assert.doesNotMatch(js, /act\(assimilate\)/);
   assert.match(js, /beginTransmission/);
-  assert.match(js, /beginTransmission\(current, skill\.id\)/);
+  assert.match(js, /beginTransmission\(current, skillId\)/);
   assert.match(html, /id="intel-transmission-skill"/);
+});
+
+
+test("spatial skill tree separates graph selection from learning", () => {
+  const markup = html.slice(html.indexOf('id="origin-skill-tree"'), html.indexOf('id="management-screen"'));
+  assert.match(markup, /id="evolution-viewport"/);
+  assert.match(markup, /id="evolution-edges"/);
+  assert.match(markup, /id="evolution-detail-title"/);
+  assert.match(markup, /id="evolution-action"[^>]* hidden/);
+  assert.match(markup, /id="evolution-zoom-in"/);
+  assert.match(markup, /id="evolution-zoom-out"/);
+  assert.match(markup, /id="evolution-fit"/);
+  assert.match(markup, /id="evolution-center"/);
+  assert.match(markup, /id="evolution-browse"/);
+  assert.match(markup, /id="evolution-node-list"/);
 });
