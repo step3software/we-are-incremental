@@ -36,6 +36,8 @@ Keep uncertain design choices documented here until tested or explicitly decided
 ## Opening-stage implementation decisions (provisional parameters)
 
 - The first carrier contains a simplified, finite cell pool. A free virion attaches to a cell, becomes latent, and only later yields new virions via productive cells. Virions are consumed by successful infections and cleared over time; infected cells can become exhausted.
-- An infectious viral load and infected-cell threshold unlock **Continue spreading**. This is a transition to a new scale of gameplay, not a button that adds virions or carriers.
+- An infectious viral load and infected-cell threshold reveal a **branching evolution skill tree**, not a Continue button. The initial milestones (cell entry, replication, infectious carrier) complete automatically, followed by a mutually exclusive transmission adaptation.
+- **Silent Shedding** spreads 20% slower with 50% less vigilance. **Viral Surge** spreads 50% faster with 50% more vigilance. These effects are first-world balance assumptions to validate through playtesting, not approved permanent parameters.
+- More advanced biological choices should extend the skill tree. The existing later-stage upgrade list is temporary scaffolding.
 - Existing planetary simulation, upgrades and prestige remain available after this transition. Later-world scout openings currently skip the one-virion tutorial; scout biology itself is a future design decision.
 - Exact replication, latency, clearance, and transmission thresholds are fictionalized balance constants, not biological facts.
