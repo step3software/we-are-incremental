@@ -5,7 +5,7 @@
 ## Cohesive scope
 
 - Repository README, design authority, architecture and decisions.
-- Simple local web client with a readable, responsive single-page invasion screen.
+- Evolve-inspired, compact local web client with a persistent resource ledger, tabbed systems, grouped actions, and responsive layout (see docs/ui-guidelines.md).
 - Deterministic planet simulation with assimilation, biomass, upgrades, and vigilance.
 - Planet takeover thresholds, launch organism, scout transition.
 - Permanent lineage gene choices and next-world scout directive choices.
@@ -19,6 +19,7 @@
 - The player explicitly selects how the scout begins the next planet.
 - Available evolution choices grow after more conquered planets.
 - The app starts locally without installing third-party packages.
+- Resource ledger stays visible across functional, keyboard-accessible tabs and shows production rates, costs, and launch prerequisites.
 - **npm run check** and **npm test** pass, including prestige and persistence regressions.
 - The PR remains unmerged for owner review.
 

@@ -24,6 +24,7 @@ This is an early systems prototype, not a content-complete game. Planet politics
 ## Project references
 
 - [Game design](docs/game-design.md) — fantasy, systems, prestige model, design principles
+- [UI guidelines](docs/ui-guidelines.md) — Evolve-inspired resource ledger, grouped actions, and tabbed interface
 - [Architecture](docs/architecture.md) — implementation boundaries, saved-game rules, test approach
 - [Decisions](docs/decisions.md) — what the brief fixes versus what is provisional
 - [Milestones](docs/milestones/WI-01-foundation.md) — four outcome-based implementation stages, one file per milestone
@@ -35,3 +36,5 @@ This is an early systems prototype, not a content-complete game. Planet politics
 - **npm run check** — JavaScript syntax checks
 
 The repository retains its existing **Mozilla Public License 2.0**. Work is proposed on feature branches and pull requests, not merged automatically.
+
+**Interface reference:** [Evolve Incremental](https://pmotschmann.github.io/Evolve/) inspires the compact, readable management layout. Its source, artwork, branding, and specific interface are not copied.

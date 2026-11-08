@@ -79,3 +79,7 @@ Exact thresholds, costs, rates, names, numbers of worlds, and trait effects are 
 ## Success criteria
 
 A player should understand the premise in under a minute, finish a first invasion without needing a guide, and be excited for a second run because **their next scout starts differently and their collective has learned something durable**. Subsequent worlds should surface new meaningful decisions at regular intervals.
+
+## Interface direction
+
+Use [Evolve Incremental](https://pmotschmann.github.io/Evolve/) as the reference for a compact, text-led management interface. Keep resource stocks, capacities, and production rates persistent while systems live in tabbed, actionable sections. Minimize decorative visuals; prioritize clear costs, disabled states, and progressive reveal. The specific UI requirements and originality boundary are centralized in [UI guidelines](ui-guidelines.md).

@@ -5,6 +5,7 @@ Build the incremental game described in [docs/game-design.md](docs/game-design.m
 
 ## Sources of truth
 - The game vision and intended mechanics live in docs/game-design.md.
+- The UI design authority is docs/ui-guidelines.md: Evolve-inspired density and hierarchy, with original visual identity.
 - Actual current mechanics and save schema live in src/game.js and src/storage.js.
 - docs/decisions.md distinguishes confirmed premise from working design assumptions.
 - One milestone per file under docs/milestones/. Avoid duplicating normative requirements across files.

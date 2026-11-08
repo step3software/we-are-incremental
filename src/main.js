@@ -1,5 +1,5 @@
 import {
-  UPGRADES, GENES, advance, assimilate, availableDirectives, availableGenes,
+  UPGRADES, GENES, DIRECTIVES, advance, assimilate, availableDirectives, availableGenes,
   buildLauncher, buyUpgrade, canLaunch, createGame, getPlanet, getStats,
   launchScout, launcherCost, takeover, upgradeCost, TAKEOVER_TO_BUILD, TAKEOVER_TO_LAUNCH
 } from "./game.js";
@@ -11,7 +11,11 @@ const whole = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const initial = loadGame();
 let state = initial.state;
 let lastSaved = Date.now();
+let lastLineageRender = "";
+let lastObjectiveRender = "";
 const upgradeButtons = new Map();
+const events = [];
+const tabs = [...document.querySelectorAll('[role="tab"][data-tab]')];
 
 function count(number) {
   return number < 10000 ? whole.format(Math.floor(number)) : compact.format(Math.floor(number));
@@ -26,6 +30,45 @@ function notice(message) {
   element("notice").hidden = !message;
 }
 
+function recordEvent(message) {
+  events.unshift(message);
+  if (events.length > 7) events.pop();
+  const list = element("event-log");
+  list.replaceChildren();
+  for (const entry of events) {
+    const row = document.createElement("li");
+    row.textContent = entry;
+    list.append(row);
+  }
+}
+
+function selectTab(tabName, focus = false) {
+  for (const tab of tabs) {
+    const selected = tab.dataset.tab === tabName;
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    tab.classList.toggle("active", selected);
+    const panel = element("tab-" + tab.dataset.tab);
+    panel.hidden = !selected;
+    if (selected && focus) tab.focus();
+  }
+}
+
+for (let index = 0; index < tabs.length; index++) {
+  const tab = tabs[index];
+  tab.addEventListener("click", () => selectTab(tab.dataset.tab));
+  tab.addEventListener("keydown", event => {
+    let target = index;
+    if (event.key === "ArrowRight") target = (index + 1) % tabs.length;
+    else if (event.key === "ArrowLeft") target = (index - 1 + tabs.length) % tabs.length;
+    else if (event.key === "Home") target = 0;
+    else if (event.key === "End") target = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    selectTab(tabs[target].dataset.tab, true);
+  });
+}
+
 function synchronize() {
   const now = Date.now();
   state = { ...advance(state, Math.max(0, (now - state.updatedAt) / 1000)), updatedAt: now };
@@ -36,11 +79,12 @@ function persist() {
   lastSaved = Date.now();
 }
 
-function act(transform) {
+function act(transform, description) {
   synchronize();
   const next = transform(state);
   if (next !== state) {
     state = next;
+    if (description) recordEvent(typeof description === "function" ? description(state) : description);
     persist();
   }
   render();
@@ -64,9 +108,89 @@ function createUpgradeButtons() {
     const price = document.createElement("strong");
     value.append(level, price);
     button.append(content, value);
-    button.addEventListener("click", () => act(current => buyUpgrade(current, upgrade.id)));
+    button.addEventListener("click", () => act(
+      current => buyUpgrade(current, upgrade.id),
+      current => upgrade.name + " advanced to level " + current.upgrades[upgrade.id] + "."
+    ));
     element("upgrade-list").append(button);
     upgradeButtons.set(upgrade.id, { button, level, price });
+  }
+}
+
+function makeLedgerRow(name, description, status, locked) {
+  const row = document.createElement("div");
+  row.className = "ledger-row" + (locked ? " locked" : "");
+  const text = document.createElement("div");
+  const title = document.createElement("strong");
+  title.textContent = name;
+  const explanation = document.createElement("small");
+  explanation.textContent = description;
+  const counter = document.createElement("span");
+  counter.textContent = status;
+  text.append(title, explanation);
+  row.append(text, counter);
+  return row;
+}
+
+function renderLineage() {
+  const signature = [state.lineage.worlds, JSON.stringify(state.lineage.genes), state.directive].join("|");
+  if (signature === lastLineageRender) return;
+  lastLineageRender = signature;
+
+  const owned = GENES.filter(gene => (state.lineage.genes[gene.id] || 0) > 0);
+  element("genome-list").textContent = owned.length
+    ? owned.map(gene => gene.name + " " + state.lineage.genes[gene.id]).join(" · ")
+    : "No inherited adaptations yet.";
+
+  const geneLedger = element("gene-ledger");
+  geneLedger.replaceChildren();
+  for (const gene of GENES) {
+    const rank = state.lineage.genes[gene.id] || 0;
+    const unlocked = state.lineage.worlds >= gene.unlockAfterWorlds;
+    const status = !unlocked
+      ? "AFTER " + gene.unlockAfterWorlds + " WORLDS"
+      : rank ? "RANK " + rank : "AVAILABLE";
+    geneLedger.append(makeLedgerRow(gene.name, gene.description, status, !unlocked));
+  }
+
+  const directiveLedger = element("directive-ledger");
+  directiveLedger.replaceChildren();
+  for (const directive of DIRECTIVES) {
+    const unlocked = state.lineage.worlds >= directive.unlockAfterWorlds;
+    directiveLedger.append(makeLedgerRow(
+      directive.name,
+      directive.description,
+      unlocked ? "AVAILABLE" : "AFTER " + directive.unlockAfterWorlds + " WORLDS",
+      !unlocked
+    ));
+  }
+  element("current-directive").textContent =
+    DIRECTIVES.find(directive => directive.id === state.directive)?.name || "Pioneer scout";
+}
+
+function renderObjectives(portion) {
+  const objectives = [
+    { label: "Establish the first 10 hosts", done: state.hosts >= 10 },
+    { label: "Assimilate 70% of the planet", done: portion >= TAKEOVER_TO_BUILD },
+    { label: "Grow the scout launch organism", done: state.launcherBuilt },
+    { label: "Control 95% to launch a scout", done: portion >= TAKEOVER_TO_LAUNCH }
+  ];
+  const signature = objectives.map(objective => String(objective.done)).join("");
+  if (signature === lastObjectiveRender) return;
+  lastObjectiveRender = signature;
+  const list = element("objective-list");
+  list.replaceChildren();
+  for (const objective of objectives) {
+    const row = document.createElement("li");
+    if (objective.done) row.classList.add("done");
+    const marker = document.createElement("span");
+    marker.className = "check";
+    marker.textContent = objective.done ? "✓" : "○";
+    marker.setAttribute("aria-hidden", "true");
+    const label = document.createElement("span");
+    label.textContent = (objective.done ? "Completed: " : "Pending: ") + objective.label;
+    row.append(marker, label);
+    list.append(row);
   }
 }
 
@@ -74,51 +198,74 @@ function render() {
   const planet = getPlanet(state);
   const stats = getStats(state);
   const portion = takeover(state);
+  const remaining = Math.max(0, planet.population - state.hosts);
   const percent = (portion * 100).toFixed(1);
+  const vigilance = Math.round(state.vigilance);
+  const phase = portion < 0.1 ? "Infiltrating" :
+    portion < TAKEOVER_TO_BUILD ? "Spreading" :
+    portion < TAKEOVER_TO_LAUNCH ? "Dominating" : "Conquered";
+
   element("world-number").textContent = String(state.planetIndex + 1).padStart(2, "0");
   element("worlds-completed").textContent = count(state.lineage.worlds);
+  element("world-phase").textContent = phase;
   element("world-name").textContent = planet.name;
   element("world-epithet").textContent = planet.epithet;
   element("world-description").textContent = planet.description;
   element("takeover-percent").textContent = percent + "%";
   element("takeover-progress").setAttribute("aria-valuenow", String(Math.round(portion * 100)));
   element("takeover-fill").style.width = String(portion * 100) + "%";
-  element("host-count").textContent = count(state.hosts) + " / " + count(planet.population) + " hosts";
-  element("resistance-label").textContent = "Vigilance " + Math.round(state.vigilance) + "%";
+  element("host-count").textContent = count(state.hosts) + " / " + count(planet.population);
+  element("resistance-label").textContent = vigilance + "%";
   element("biomass-count").textContent = count(state.biomass);
-  element("biomass-rate").textContent = "+" + rate(stats.biomassPerSecond) + " / second";
-  element("spread-rate").textContent = rate(stats.spreadPerSecond) + " /s";
-  element("assimilate-power").textContent = "+" + count(Math.min(stats.clickHosts, planet.population - state.hosts));
+  element("biomass-rate").textContent = "+" + rate(stats.biomassPerSecond) + "/s";
+  element("spread-rate").textContent = "+" + rate(stats.spreadPerSecond) + "/s";
+  element("lineage-worlds").textContent = count(state.lineage.worlds);
+  element("lineage-ranks").textContent = count(
+    Object.values(state.lineage.genes).reduce((sum, rank) => sum + rank, 0)
+  );
+  element("planet-population").textContent = count(planet.population);
+  element("planet-remaining").textContent = count(remaining) + " unassimilated";
+  element("passive-recruitment").textContent = "+" + rate(stats.spreadPerSecond) + " hosts / s";
+  element("local-vigilance").textContent = vigilance + "% alert";
+  element("assimilate-power").textContent = "+" + count(Math.min(stats.clickHosts, remaining));
   element("assimilate").disabled = portion >= 1;
+
+  element("intel-world").textContent = planet.name;
+  element("intel-population").textContent = count(planet.population);
+  element("intel-remaining").textContent = count(remaining);
+  element("intel-vigilance").textContent = vigilance + "%";
+  element("intel-phase").textContent = phase;
+  element("intel-launcher").textContent = state.launcherBuilt ? "Fully grown" : "Not grown";
 
   for (const upgrade of UPGRADES) {
     const ui = upgradeButtons.get(upgrade.id);
     const cost = upgradeCost(state, upgrade.id);
-    ui.level.textContent = "LEVEL " + state.upgrades[upgrade.id];
+    ui.level.textContent = "LVL " + state.upgrades[upgrade.id];
     ui.price.textContent = count(cost) + " BIO";
     ui.button.disabled = state.biomass < cost;
+    ui.button.setAttribute("aria-label",
+      "Purchase " + upgrade.name + " level " + (state.upgrades[upgrade.id] + 1) +
+      " for " + count(cost) + " biomass");
   }
 
   const ready = canLaunch(state);
   const build = element("build-launcher");
   build.hidden = state.launcherBuilt;
   build.disabled = state.launcherBuilt || portion < TAKEOVER_TO_BUILD || state.biomass < launcherCost(state);
-  build.textContent = "GROW LAUNCH ORGAN · " + count(launcherCost(state)) + " BIO";
+  build.textContent = "GROW ORGAN · " + count(launcherCost(state)) + " BIO";
   element("open-launch").disabled = !ready;
   if (ready) {
     element("launch-status").textContent = "The planet is yours. Choose what survives into the next generation.";
   } else if (state.launcherBuilt) {
-    element("launch-status").textContent = "Launcher ready. Assimilate " + Math.round(TAKEOVER_TO_LAUNCH * 100) + "% of the world to fire the scout.";
+    element("launch-status").textContent = "Launcher grown. Assimilate 95% of the world to deploy a scout.";
   } else if (portion < TAKEOVER_TO_BUILD) {
-    element("launch-status").textContent = "Assimilate " + Math.round(TAKEOVER_TO_BUILD * 100) + "% of the world to grow a spore launcher.";
+    element("launch-status").textContent = "Assimilate 70% of this world to grow a scout launcher.";
   } else {
-    element("launch-status").textContent = "You control enough of this world. Feed your launch organism " + count(launcherCost(state)) + " biomass.";
+    element("launch-status").textContent = "Feed the launch organism " + count(launcherCost(state)) + " biomass.";
   }
 
-  const legacy = GENES.filter(gene => (state.lineage.genes[gene.id] || 0) > 0);
-  element("genome-list").textContent = legacy.length ?
-    legacy.map(gene => gene.name + " " + state.lineage.genes[gene.id]).join(" · ") :
-    "No inherited adaptations. The first conquest will change that.";
+  renderLineage();
+  renderObjectives(portion);
 }
 
 function addChoice(container, group, choice, checked) {
@@ -152,14 +299,21 @@ function openScout() {
   directiveContainer.replaceChildren();
   genes.forEach((gene, index) => {
     const rank = state.lineage.genes[gene.id] || 0;
-    addChoice(geneContainer, "gene", { ...gene, description: "Rank " + (rank + 1) + " · " + gene.description }, index === 0);
+    addChoice(geneContainer, "gene",
+      { ...gene, description: "Rank " + (rank + 1) + " · " + gene.description }, index === 0);
   });
-  directives.forEach((directive, index) => addChoice(directiveContainer, "directive", directive, index === 0));
+  directives.forEach((directive, index) =>
+    addChoice(directiveContainer, "directive", directive, index === 0));
   element("scout-dialog").showModal();
 }
 
-element("assimilate").addEventListener("click", () => act(assimilate));
-element("build-launcher").addEventListener("click", () => act(buildLauncher));
+element("assimilate").addEventListener("click", () => {
+  const first = state.hosts < 2;
+  act(assimilate);
+  if (first && state.hosts >= 2) recordEvent("The first host has been assimilated.");
+});
+element("build-launcher").addEventListener("click",
+  () => act(buildLauncher, "The planetary launch organism has been grown."));
 element("open-launch").addEventListener("click", openScout);
 element("cancel-scout").addEventListener("click", () => element("scout-dialog").close());
 element("scout-form").addEventListener("submit", event => {
@@ -173,6 +327,8 @@ element("scout-form").addEventListener("submit", event => {
   }
   state = evolved;
   element("scout-dialog").close();
+  selectTab("invasion");
+  recordEvent("A scout landed on " + getPlanet(state).name + ". The collective evolves.");
   notice("Scout deployed. Your lineage remembers the world it conquered.");
   persist();
   render();
@@ -184,6 +340,11 @@ element("reset-game").addEventListener("click", () => {
     return;
   }
   state = createGame(Date.now());
+  lastLineageRender = "";
+  lastObjectiveRender = "";
+  events.length = 0;
+  recordEvent("A solitary scout has landed on " + getPlanet(state).name + ".");
+  selectTab("invasion");
   notice("Lineage erased. A new scout has landed.");
   persist();
   render();
@@ -194,9 +355,14 @@ document.addEventListener("visibilitychange", () => {
 });
 
 createUpgradeButtons();
+selectTab("invasion");
+recordEvent("A scout has landed on " + getPlanet(state).name + ".");
 render();
 if (initial.recovered) notice("The saved game was incompatible or unreadable; a new lineage has begun.");
-else if (initial.offlineSeconds >= 10) notice("Your swarm continued spreading during " + Math.round(initial.offlineSeconds / 60) + " minutes away (up to six hours).");
+else if (initial.offlineSeconds >= 10) {
+  notice("Your swarm continued spreading during " +
+    Math.round(initial.offlineSeconds / 60) + " minutes away (up to six hours).");
+}
 setInterval(() => {
   synchronize();
   render();
