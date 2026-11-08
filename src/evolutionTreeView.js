@@ -2,7 +2,7 @@
 // dependency-free client: authored radial layout, SVG links, selection inspector,
 // independent evolve action, pan/zoom/fit, keyboard navigation and a browse list.
 // Gameplay authority remains in game.js and skills.js.
-import { evolutionTreeModel, EVOLUTION_NODES, directionalNeighbor, fitTreeCamera } from "./evolutionTreeLayout.js";
+import { evolutionTreeModel, EVOLUTION_NODES, nodeCenter, directionalNeighbor, fitTreeCamera } from "./evolutionTreeLayout.js";
 
 const svgNS = "http://www.w3.org/2000/svg";
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -56,8 +56,9 @@ export function createEvolutionTreeView(root, onAcquire) {
     button.id = "evolution-node-" + node.id;
     button.dataset.nodeId = node.id;
     button.className = "evolution-node evolution-node--" + kind;
-    button.style.left = nodeCenterX(node) + "px";
-    button.style.top = nodeCenterY(node) + "px";
+    const center = nodeCenter(node);
+    button.style.left = center.x + "px";
+    button.style.top = center.y + "px";
     const mark = document.createElement("span");
     mark.className = "evolution-node-mark";
     mark.textContent = node.mark;
@@ -78,12 +79,6 @@ export function createEvolutionTreeView(root, onAcquire) {
     nodeButtons.set(node.id, button);
   }
 
-  function nodeCenterX(node) {
-    return Math.cos(node.angle * Math.PI / 180) * node.radius + (node.offset?.x ?? 0);
-  }
-  function nodeCenterY(node) {
-    return Math.sin(node.angle * Math.PI / 180) * node.radius + (node.offset?.y ?? 0);
-  }
   function applyCamera() {
     world.style.transform = "translate(" + camera.x + "px," + camera.y +
       "px) scale(" + camera.zoom + ")";
