@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e17">
+  <meta name="description" content="Become the swarm. Take the world. Evolve your lineage and launch into the next.">
+  <title>We Are Incremental</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="identity">
+        <div class="glyph" aria-hidden="true">◉</div>
+        <div>
+          <div class="brand">WE ARE <span>INCREMENTAL</span></div>
+          <div class="tagline">ONE HIVE. INFINITE WORLDS.</div>
+        </div>
+      </div>
+      <div class="campaign">
+        <div><span class="label">WORLD</span><strong id="world-number">01</strong></div>
+        <div><span class="label">CONQUERED</span><strong id="worlds-completed">0</strong></div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="world-panel" aria-labelledby="world-name">
+        <div class="eyebrow"><span class="signal" aria-hidden="true"></span> ACTIVE INFILTRATION</div>
+        <p class="world-epithet" id="world-epithet">The orchard world</p>
+        <h1 id="world-name">Hespera</h1>
+        <p class="world-description" id="world-description">They are many. You are one borrowed body. Begin quietly.</p>
+
+        <div class="planet-visual" aria-hidden="true">
+          <div class="orb-glow"></div>
+          <div class="orbit-ring ring-one"></div>
+          <div class="orbit-ring ring-two"></div>
+          <div class="orb"><div class="orb-continent"></div><div class="orb-shade"></div></div>
+          <div class="orb-dot dot-one"></div>
+          <div class="orb-dot dot-two"></div>
+        </div>
+
+        <div class="conquest-label"><span>ASSIMILATED POPULATION</span><strong id="takeover-percent">0.1%</strong></div>
+        <div class="progress-track" id="takeover-progress" role="progressbar" aria-label="Assimilated population" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="takeover-fill"></div></div>
+        <div class="conquest-detail"><span id="host-count">1 / 1,500 hosts</span><span id="resistance-label">Vigilance 0%</span></div>
+
+        <button type="button" class="assimilate-button" id="assimilate">
+          <span>ASSIMILATE HOST</span>
+          <strong id="assimilate-power">+1</strong>
+        </button>
+        <p class="hint">Your first borrowed bodies gather a larger collective. The network spreads on its own.</p>
+      </section>
+
+      <div class="right-column">
+        <section class="panel resource-panel" aria-label="Swarm resources">
+          <div class="section-heading"><span>SWARM SIGNAL</span><span class="live-indicator">● LIVE</span></div>
+          <div class="metrics">
+            <div class="metric"><span>BIOMASS</span><strong id="biomass-count">0</strong><small id="biomass-rate">+0.0 / second</small></div>
+            <div class="metric"><span>SPREAD</span><strong id="spread-rate">0.0 /s</strong><small>Passive assimilation</small></div>
+          </div>
+        </section>
+
+        <section class="panel upgrade-panel" aria-labelledby="upgrade-title">
+          <div class="section-heading"><span id="upgrade-title">ADAPT YOUR INVASION</span><span class="section-caption">PLANET-LOCAL</span></div>
+          <div id="upgrade-list" class="upgrade-list"></div>
+        </section>
+
+        <section class="panel launch-panel" aria-labelledby="launch-title">
+          <div class="section-heading"><span id="launch-title">THE NEXT WORLD</span><span class="section-caption">PRESTIGE</span></div>
+          <h2>Grow a launch organism.</h2>
+          <p id="launch-status">Assimilate 70% of this world to construct a spore launcher.</p>
+          <div class="launch-actions">
+            <button type="button" class="secondary-button" id="build-launcher" disabled>BUILD LAUNCHER</button>
+            <button type="button" class="primary-button" id="open-launch" disabled>LAUNCH SCOUT</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="genome-footer">
+      <div><div class="footer-heading">LINEAGE MEMORY</div><p id="genome-list">No inherited adaptations. The first conquest will change that.</p></div>
+      <button id="reset-game" type="button" class="text-button">Erase save</button>
+    </footer>
+  </div>
+
+  <div id="notice" role="status" aria-live="polite" class="notice" hidden></div>
+  <dialog id="scout-dialog" class="scout-dialog" aria-labelledby="scout-title">
+    <form id="scout-form">
+      <div class="eyebrow">PLANET SECURED · NEXT GENERATION</div>
+      <h2 id="scout-title">What will the next scout become?</h2>
+      <p class="dialog-intro">Choose an inherited adaptation for your lineage and a mission directive for the next world. The old planet is left behind.</p>
+      <h3>Permanent evolution</h3>
+      <div id="gene-choices" class="choice-grid"></div>
+      <h3>Next-world directive</h3>
+      <div id="directive-choices" class="choice-grid"></div>
+      <div class="dialog-actions">
+        <button id="cancel-scout" type="button" class="secondary-button">NOT YET</button>
+        <button type="submit" class="primary-button">EVOLVE &amp; LAUNCH</button>
+      </div>
+    </form>
+  </dialog>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
