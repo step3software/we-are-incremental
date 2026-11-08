@@ -10,7 +10,7 @@ Requirements: Node.js 20 or later. No dependencies to install.
 
 1. Run **npm run dev**.
 2. Open http://127.0.0.1:5173.
-3. Begin as **one virion inside one carrier**. Watch it enter a cell, replicate, and spread automatically; no clicking generates viruses. Once that carrier is infectious, continue to planetary transmission, where hosts spread passively.
+3. Begin as **one virion inside one carrier**. Watch it enter a cell, replicate, and spread automatically; no clicking generates viruses. Once the carrier is infectious, a **small evolution skill tree** appears. Select a transmission adaptation to begin passive spread beyond the first carrier.
 4. Buy planetary upgrades, grow a launcher at 70% control, and launch at 95% control.
 5. Choose **one permanent gene** and **one next-world scout directive**. Repeat.
 
@@ -18,7 +18,7 @@ Progress is saved automatically in browser local storage, including up to six ho
 
 ## What is here
 
-This first vertical slice begins with the extremely minimal **one-virion opening** (one carrier, delayed cellular infection and replication). Only a virion counter is visible initially. As the virus spreads, infected-cell information becomes visible; the larger Evolve-inspired management interface stays entirely hidden until the player chooses to expand beyond the infectious carrier. It then proves the loop: **infect → spread → take over → build → launch → evolve**. It includes four planetary archetypes in rotation, local upgrades, a simple vigilance modifier, persistent evolution, scout directives, and a responsive single-page interface.
+This first vertical slice begins with the extremely minimal **one-virion opening** (one carrier, delayed cellular infection and replication). Only a virion counter is visible initially. As the virus spreads, infected-cell information becomes visible; the larger Evolve-inspired management interface stays entirely hidden until a transmission skill is selected. The skill tree replaces the generic Continue button and its first branch changes the next phase's spread and vigilance. It then proves the loop: **infect → spread → take over → build → launch → evolve**. It includes four planetary archetypes in rotation, local upgrades, a simple vigilance modifier, persistent evolution, scout directives, and a responsive single-page interface.
 
 This is an early systems prototype, not a content-complete game. Planet politics, competing defenses, host abilities, alternative victory paths, balance, and endgame progression remain intentionally open for development.
 

@@ -4,7 +4,7 @@ import {
   VIRAL_CELLS, VIRAL_LATENCY_SECONDS, advanceViral, canTransmit,
   createViralState, healthyCells, infectedCells, validViralState
 } from "../src/viral.js";
-import { advance, beginTransmission, createGame } from "../src/game.js";
+import { advance, beginTransmission, createGame, getStats } from "../src/game.js";
 import { restore } from "../src/storage.js";
 
 test("first generation begins with exactly one free virion inside one carrier", () => {
@@ -61,13 +61,16 @@ test("the model is deterministic across multiple timer increments", () => {
   assert.deepEqual(once, chunks);
 });
 
-test("transition to planetary spread requires an infectious carrier", () => {
+test("transmission requires a mature carrier and a valid skill tree branch", () => {
   const game = createGame();
-  assert.equal(beginTransmission(game), game);
+  assert.equal(beginTransmission(game, "covert"), game);
   const ready = advance(game, 240);
-  const next = beginTransmission(ready);
+  assert.equal(beginTransmission(ready), ready, "no generic continue action");
+  assert.equal(beginTransmission(ready, "unknown"), ready);
+  const next = beginTransmission(ready, "covert");
   assert.equal(next.stage, "planetary");
   assert.equal(next.viral, null);
+  assert.equal(next.transmissionSkill, "covert");
   assert.equal(next.hosts, 1);
   assert.equal(next.biomass, 0);
 });
@@ -90,7 +93,8 @@ test("old version-1 saves migrate to the planetary stage without losing progress
   const loaded = restore(JSON.stringify(legacy), 2000);
   assert.equal(loaded.recovered, false);
   assert.equal(loaded.migrated, true);
-  assert.equal(loaded.state.version, 2);
+  assert.equal(loaded.state.version, 3);
+  assert.equal(loaded.state.transmissionSkill, null);
   assert.equal(loaded.state.stage, "planetary");
   assert.equal(loaded.state.planetIndex, 1);
 });
@@ -112,4 +116,49 @@ test("fractional and negative elapsed time are safe", () => {
   const full = advanceViral(part, 0.2);
   assert.equal(full.remainder, 0);
   assert.equal(full.virions, 1);
+});
+
+
+test("transmission branches produce meaningful alternative planetary strategies", () => {
+  const infectious = advance(createGame(), 240);
+  const covert = beginTransmission(infectious, "covert");
+  const surge = beginTransmission(infectious, "surge");
+  const statsCovert = getStats(covert);
+  const statsSurge = getStats(surge);
+  assert.ok(statsCovert.spreadPerSecond < statsSurge.spreadPerSecond);
+  assert.ok(statsCovert.vigilanceMultiplier < statsSurge.vigilanceMultiplier);
+  const exposedCovert = advance(covert, 90);
+  const exposedSurge = advance(surge, 90);
+  assert.ok(exposedCovert.hosts < exposedSurge.hosts);
+  assert.ok(exposedCovert.vigilance < exposedSurge.vigilance);
+  assert.equal(covert.transmissionSkill, "covert");
+  assert.equal(surge.transmissionSkill, "surge");
+});
+
+test("existing version 2 viral saves migrate with the skill tree still available", () => {
+  const existing = advance(createGame(1000), 240);
+  const v2 = { ...existing, version: 2 };
+  delete v2.transmissionSkill;
+  const loaded = restore(JSON.stringify(v2), 1000 + 241000);
+  assert.equal(loaded.migrated, true);
+  assert.equal(loaded.state.stage, "viral");
+  assert.equal(loaded.state.transmissionSkill, null);
+  assert.ok(canTransmit(loaded.state.viral));
+  assert.equal(beginTransmission(loaded.state, "surge").stage, "planetary");
+});
+
+test("skill choice persists in the new save and is reset on the next world", () => {
+  const infectious = advance(createGame(1000), 240);
+  const chosen = beginTransmission(infectious, "surge");
+  const restored = restore(JSON.stringify(chosen), 1000 + 241000);
+  assert.equal(restored.recovered, false);
+  assert.equal(restored.state.transmissionSkill, "surge");
+  const nextWorld = createGame(1000, 1, { worlds: 1, genes: {} });
+  assert.equal(nextWorld.transmissionSkill, null);
+});
+
+test("tampered saved transmission skills are rejected", () => {
+  const bad = beginTransmission(advance(createGame(), 240), "covert");
+  bad.transmissionSkill = "unknown";
+  assert.equal(restore(JSON.stringify(bad)).recovered, true);
 });

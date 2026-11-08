@@ -7,7 +7,7 @@
 - Repository README, design authority, architecture and decisions.
 - Evolve-inspired, compact local web client with a persistent resource ledger, tabbed systems, grouped actions, and responsive layout (see docs/ui-guidelines.md).
 - Deterministic within-carrier viral simulation starting from one virion; infection, latency, production, decay and finite cells without click farming.
-- Reveal the larger planetary simulation only after the first carrier becomes infectious; then continue biomass, upgrades, and vigilance.
+- Unlock a data-driven evolution skill tree when the first carrier becomes infectious. Require a meaningful, exclusive transmission adaptation rather than a generic Continue button; then reveal biomass, upgrades, and vigilance.
 - Planet takeover thresholds, launch organism, scout transition.
 - Permanent lineage gene choices and next-world scout directive choices.
 - Versioned local save, bounded offline progress and recovery from invalid saves.
@@ -16,7 +16,9 @@
 ## Acceptance
 
 - The starting screen shows **1 virion**, with every larger resource panel, header, tab and purchase control hidden. The first cell is infected automatically; further virions are produced without clicking.
-- The viral opening cannot permanently deadlock and can progress to the planetary stage after the carrier becomes infectious.
+- The viral opening cannot permanently deadlock. Once infectious, selecting a valid transmission skill transitions to planetary spread; invalid selections do not.
+- The two starting transmission choices measurably differ in passive growth and vigilance; the chosen branch survives save/reload.
+- Existing version-1 and version-2 saves migrate without losing progress.
 - Existing version-1 saves migrate forward without losing conquered planets.
 - A new player can reach the first scout launch and begin a different second planet.
 - The launch resets only planet-local progress; evolved lineage effects persist.

@@ -1,6 +1,7 @@
 import { advance, createGame, MAX_OFFLINE_SECONDS, migrateLegacyGame, validSave } from "./game.js";
 
-export const SAVE_KEY = "we-are-incremental:v2";
+export const SAVE_KEY = "we-are-incremental:v3";
+export const PREVIOUS_SAVE_KEY = "we-are-incremental:v2";
 export const LEGACY_SAVE_KEY = "we-are-incremental:v1";
 
 export function restore(serialized, now = Date.now()) {
@@ -19,8 +20,10 @@ export function restore(serialized, now = Date.now()) {
 
 export function loadGame(now = Date.now()) {
   try {
-    const saved = window.localStorage.getItem(SAVE_KEY);
-    return restore(saved !== null ? saved : window.localStorage.getItem(LEGACY_SAVE_KEY), now);
+    const saved = window.localStorage.getItem(SAVE_KEY) ??
+      window.localStorage.getItem(PREVIOUS_SAVE_KEY) ??
+      window.localStorage.getItem(LEGACY_SAVE_KEY);
+    return restore(saved, now);
   } catch {
     return { state: createGame(now), offlineSeconds: 0, recovered: true };
   }
@@ -38,6 +41,7 @@ export function saveGame(state, now = Date.now()) {
 export function deleteSave() {
   try {
     window.localStorage.removeItem(SAVE_KEY);
+    window.localStorage.removeItem(PREVIOUS_SAVE_KEY);
     window.localStorage.removeItem(LEGACY_SAVE_KEY);
     return true;
   } catch {

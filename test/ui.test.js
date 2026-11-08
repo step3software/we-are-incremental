@@ -33,7 +33,7 @@ test("all functional tabs have labelled matching panels", () => {
 });
 
 test("scout choice controls and all gameplay actions remain available", () => {
-  for (const id of ["origin-screen", "origin-virions", "origin-continue", "upgrade-list", "build-launcher", "open-launch",
+  for (const id of ["origin-screen", "origin-virions", "origin-skill-tree", "origin-skill-choices", "upgrade-list", "build-launcher", "open-launch",
     "scout-form", "gene-choices", "directive-choices", "reset-game"]) {
     assert.ok(html.includes('id="' + id + '"'));
   }
@@ -46,8 +46,14 @@ test("first infection view is minimal and planetary controls remain hidden", () 
   assert.match(html, /id="origin-virions"[^>]*>1<\/output>/);
   assert.match(html, /id="origin-virion-label">virion<\/h1>/);
   assert.match(html, /id="origin-cells"[^>]* hidden/);
-  assert.match(html, /id="origin-ready" hidden/);
+  assert.match(html, /id="origin-skill-tree"[^>]* hidden/);
+  assert.doesNotMatch(html, /id="origin-continue"/);
+  assert.doesNotMatch(html, /Continue spreading/);
+  assert.match(js, /createOriginSkillTree/);
+  assert.match(js, /canTransmit\(viral\)/);
   assert.doesNotMatch(html, /id="assimilate"/);
   assert.doesNotMatch(js, /act\(assimilate\)/);
   assert.match(js, /beginTransmission/);
+  assert.match(js, /beginTransmission\(current, skill\.id\)/);
+  assert.match(html, /id="intel-transmission-skill"/);
 });

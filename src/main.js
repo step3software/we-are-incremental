@@ -5,6 +5,7 @@ import {
 } from "./game.js";
 import { deleteSave, loadGame, saveGame } from "./storage.js";
 import { canTransmit, infectedCells } from "./viral.js";
+import { ORIGIN_MILESTONES, TRANSMISSION_SKILLS, getTransmissionSkill } from "./skills.js";
 
 const element = id => document.getElementById(id);
 const compact = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
@@ -195,6 +196,42 @@ function renderObjectives(portion) {
   }
 }
 
+function createOriginSkillTree() {
+  const history = element("origin-skill-history");
+  for (const skill of ORIGIN_MILESTONES) {
+    const item = document.createElement("li");
+    item.className = "origin-skill-completed";
+    const tick = document.createElement("span");
+    tick.className = "origin-skill-check";
+    tick.textContent = "✓";
+    tick.setAttribute("aria-hidden", "true");
+    const label = document.createElement("span");
+    label.textContent = skill.name;
+    item.append(tick, label);
+    item.title = skill.description;
+    history.append(item);
+  }
+
+  const choices = element("origin-skill-choices");
+  for (const skill of TRANSMISSION_SKILLS) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "origin-skill-choice";
+    button.dataset.skill = skill.id;
+    const name = document.createElement("strong");
+    name.textContent = skill.name;
+    const description = document.createElement("small");
+    description.textContent = skill.description;
+    button.append(name, description);
+    button.addEventListener("click", () => {
+      act(current => beginTransmission(current, skill.id),
+        "Adapted: " + skill.name + ". The first carrier begins transmitting.");
+      if (state.stage === "planetary") selectTab("invasion");
+    });
+    choices.append(button);
+  }
+}
+
 function renderOrigin() {
   const viral = state.viral;
   const occupied = infectedCells(viral);
@@ -210,7 +247,7 @@ function renderOrigin() {
       ? "Infected cells are producing new virions."
       : "The virus has entered a cell.";
   }
-  element("origin-ready").hidden = !canTransmit(viral);
+  element("origin-skill-tree").hidden = !canTransmit(viral);
 }
 
 function render() {
@@ -260,6 +297,8 @@ function render() {
   element("intel-vigilance").textContent = vigilance + "%";
   element("intel-phase").textContent = phase;
   element("intel-launcher").textContent = state.launcherBuilt ? "Fully grown" : "Not grown";
+  element("intel-transmission-skill").textContent =
+    getTransmissionSkill(state.transmissionSkill)?.name || "Inherited";
 
   for (const upgrade of UPGRADES) {
     const ui = upgradeButtons.get(upgrade.id);
@@ -331,10 +370,6 @@ function openScout() {
   element("scout-dialog").showModal();
 }
 
-element("origin-continue").addEventListener("click", () => {
-  act(beginTransmission, "The first carrier can now transmit to others.");
-  if (state.stage === "planetary") selectTab("invasion");
-});
 element("build-launcher").addEventListener("click",
   () => act(buildLauncher, "The planetary launch organism has been grown."));
 element("open-launch").addEventListener("click", openScout);
@@ -378,6 +413,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 createUpgradeButtons();
+createOriginSkillTree();
 selectTab("invasion");
 recordEvent("A scout has landed on " + getPlanet(state).name + ".");
 render();

@@ -5,7 +5,8 @@
 ## Cohesive scope
 
 - Scout classes, traits, and launch payload/loadout budgeting.
-- Persistent evolution branches with unlock gates, synergies and distinct build paths.
+- Extend the early data-driven skill tree into a persistent evolution system with prerequisite gates, synergies, distinct build paths, and earned new capabilities.
+- Replace disconnected biological upgrade rows with appropriate skill-tree choices, while retaining passive incremental growth.
 - Choice of destination or meaningful world modifiers at launch.
 - New permanent capabilities beyond numerical bonuses.
 - Clear lineage history and previews explaining launch choices.

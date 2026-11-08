@@ -19,12 +19,13 @@ The project's user-selected UI inspiration is Evolve's **information-dense, text
 
 ## Implementation choices for WI-01
 
-- Initial virus stage: one centrally aligned **virion** count, no planetary panel, menus, buttons, upgrades, tabs, or resource bars. Infected-cell information appears only after the first cell is infected; the first actionable control appears only when transmission is viable.
-- After the infectious-carrier milestone, three-column layout at desktop width: **Resources | Game Systems | Objectives/Activity**.
+- Initial virus stage: one centrally aligned **virion** count, no planetary panel, menus, buttons, upgrades, tabs, or resource bars. Infected-cell information appears only after the first cell is infected; the first actionable controls are **transmission skill nodes** revealed only when the carrier is infectious. There must be no separate Continue button.
+- After the infectious-carrier milestone, display a minimal branching skill tree: completed cellular milestones lead to two exclusive transmission adaptations, each with distinct consequences. Selecting one opens the later management interface; there is no generic transition button.
+- After selecting a transmission adaptation, three-column layout at desktop width: **Resources | Game Systems | Objectives/Activity**.
 - Dark neutral background with modest green biological accents, but not Evolve's specific theme.
 - Tabs for **Invasion**, **Lineage**, and **Planet Intel**; no pseudo-tabs that don't change content.
 - Compact resource rows show current/cap and production rate; a single slim bar conveys planetary control.
-- Invasion tab groups direct assimilation, local upgrades, and scout launch controls.
+- Invasion tab groups passive transmission, local prototype upgrades, and scout launch controls. Future replacement of stand-alone upgrades with evolutionary nodes belongs to later milestones.
 - Lineage tab previews durable genes, locked choices, and directives, giving prestige an understandable context.
 - Planet Intel tab offers compact facts about progression and vigilance.
 - Right column summarizes launch prerequisites and recent meaningful actions.

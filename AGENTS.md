@@ -6,6 +6,7 @@ Build the incremental game described in [docs/game-design.md](docs/game-design.m
 ## Sources of truth
 - The game vision and intended mechanics live in docs/game-design.md.
 - The first-generation opening starts with exactly one virion inside one carrier. Replication and spread happen automatically, never via a click-for-one-resource action. The UI initially shows only the virion resource; additional systems appear when progression justifies them.
+- Progression choices belong in a **skill tree**, not generic continue buttons. Viral milestones complete automatically; an infectious carrier unlocks exclusive transmission branches with meaningful simulation effects. Future biological upgrades should grow this data-driven tree rather than introduce unrelated click-based actions.
 - The UI design authority is docs/ui-guidelines.md: Evolve-inspired density and hierarchy, with original visual identity.
 - Actual current mechanics and save schema live in src/game.js and src/storage.js.
 - docs/decisions.md distinguishes confirmed premise from working design assumptions.

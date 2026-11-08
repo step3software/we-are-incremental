@@ -18,10 +18,13 @@
         <div class="origin-cell-count"><span>Infected cells</span><strong id="origin-infected-cells">0</strong></div>
         <p id="origin-message" class="origin-message"></p>
       </div>
-      <div class="origin-ready" id="origin-ready" hidden>
-        <p>The first carrier is infectious.</p>
-        <button type="button" id="origin-continue">Continue spreading</button>
-      </div>
+      <section class="origin-skill-tree" id="origin-skill-tree" aria-labelledby="origin-skill-title" hidden>
+        <h2 id="origin-skill-title">Evolution</h2>
+        <p class="origin-skill-intro">Your first carrier can transmit. Choose how the infection spreads.</p>
+        <ol class="origin-skill-history" id="origin-skill-history" aria-label="Completed adaptations"></ol>
+        <div class="origin-skill-fork" aria-hidden="true"></div>
+        <div class="origin-skill-choices" id="origin-skill-choices" role="group" aria-label="Choose a transmission adaptation"></div>
+      </section>
     </div>
   </main>
   <div class="app-shell" id="management-screen" hidden>
@@ -148,6 +151,7 @@
               <div><dt>Planetary vigilance</dt><dd id="intel-vigilance">0%</dd></div>
               <div><dt>Current invasion phase</dt><dd id="intel-phase">Infiltrating</dd></div>
               <div><dt>Launcher condition</dt><dd id="intel-launcher">Not grown</dd></div>
+              <div><dt>Transmission adaptation</dt><dd id="intel-transmission-skill">Inherited</dd></div>
             </dl>
           </section>
           <section class="module">

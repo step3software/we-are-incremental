@@ -44,7 +44,7 @@ Future systems can add specialized host castes, biosphere adaptations, local fac
 ## First playable slice (WI-01)
 
 The implementation deliberately uses an approachable model:
-- **Opening:** exactly one free virion in a single carrier. It enters a susceptible cell automatically, incubates, and produces further virions. Finite local cells become infected or exhausted; additional counters are initially hidden. Once infectious, the player can proceed to the planetary view.
+- **Opening:** exactly one free virion in a single carrier. It enters a susceptible cell automatically, incubates, and produces further virions. Finite local cells become infected or exhausted; additional counters are initially hidden. Once infectious, the player's first **skill-tree decision** becomes available: stealthier shedding or faster, more conspicuous spread. The choice has an immediate mechanical effect on passive transmission and vigilance.
 - **Hosts:** the captured portion of a finite planetary population. Existing carriers spread automatically; there is no direct host-increment button.
 - **Biomass:** locally generated resource. Spend it to improve capture, passive conversion, biomass production, or disguise.
 - **Vigilance:** a simplified measure of planetary response. It grows when hosts are captured and reduces growth; disguise counters it. This is friction, not an irreversible failure state.
@@ -87,4 +87,10 @@ Use [Evolve Incremental](https://pmotschmann.github.io/Evolve/) as the reference
 
 ### Opening-stage revelation
 
-The first seconds show **one virion and nothing else interactive**. A single infected cell is the first reveal, then passive replication. A carrier that becomes infectious unlocks the choice to enter the wider transmission stage. The resource sidebar, planetary systems, tabs, objectives, and prestige controls are deliberately withheld until the transition. This reveal is not a timer-only cosmetic animation: a discrete within-carrier simulation drives it and survives save/reload/offline progress. Its biological figures are deliberately abstracted game tuning, not epidemiological claims.
+The first seconds show **one virion and nothing else interactive**. A single infected cell is the first reveal, then passive replication. A carrier that becomes infectious reveals the first **evolution skill tree**. Completed cell-entry, replication, and infectious-carrier milestones form the trunk; the player selects between mutually exclusive transmission skills to begin spreading beyond the first host. The resource sidebar, planetary systems, tabs, objectives, and prestige controls are deliberately withheld until the transition. This reveal is not a timer-only cosmetic animation: a discrete within-carrier simulation drives it and survives save/reload/offline progress. Its biological figures are deliberately abstracted game tuning, not epidemiological claims.
+
+## Skill tree as the progression language
+
+Advancement should feel like biological evolution, not pressing a Continue button. A prerequisite-based, data-driven skill tree is the primary interaction pattern for new capabilities. Progression milestones can complete automatically when the swarm reaches them. Decision nodes should create genuine alternative strategies with downstream mechanical consequences. In WI-01, the first two branches are **Silent Shedding** (20% slower passive spread, 50% lower vigilance response) and **Viral Surge** (50% faster spread, 50% higher vigilance response). They are exclusive and local to the first planet; later-world inheritance and deeper tree branches remain future design work.
+
+The existing planetary upgrade list is an interim prototype mechanism, not the long-term interaction model. Future milestones should migrate important biological progression to unlockable tree nodes and preserve the original incremental feel with automatic processes.
