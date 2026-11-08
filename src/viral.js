@@ -9,6 +9,7 @@ const CONTACTS_PER_VIRION = 0.16;
 const PRODUCTION_PER_CELL = 2.1;
 const FREE_VIRION_CLEARANCE = 0.02;
 const PRODUCER_LOSS = 0.012;
+const TISSUE_RENEWAL = 0.002;
 
 export function createViralState() {
   return {
@@ -20,6 +21,8 @@ export function createViralState() {
     productionCredit: 0,
     clearanceCredit: 0,
     lossCredit: 0,
+    repairCredit: 0,
+    transmissionReady: false,
     remainder: 0
   };
 }
@@ -33,12 +36,15 @@ export function healthyCells(viral) {
 }
 
 export function canTransmit(viral) {
-  return viral.virions >= VIRAL_TRANSMISSION_VIRIONS &&
-    infectedCells(viral) >= VIRAL_TRANSMISSION_CELLS;
+  return viral.transmissionReady === true ||
+    (viral.virions >= VIRAL_TRANSMISSION_VIRIONS &&
+    infectedCells(viral) >= VIRAL_TRANSMISSION_CELLS);
 }
 
 export function advanceViral(current, seconds) {
-  const next = { ...current, latent: [...current.latent] };
+  const next = { ...current, latent: [...current.latent],
+    repairCredit: current.repairCredit ?? 0,
+    transmissionReady: current.transmissionReady === true };
   if (!Number.isFinite(seconds) || seconds <= 0) return next;
   const time = current.remainder + Math.min(6 * 60 * 60, seconds);
   const ticks = Math.floor(time);
@@ -75,6 +81,20 @@ export function advanceViral(current, seconds) {
     next.producingCells -= lost;
     next.exhaustedCells += lost;
     next.lossCredit -= lost;
+
+    // Living tissue replenishes: a chronic infection must not permanently
+    // exhaust every available cell and lock the first run.
+    next.repairCredit += next.exhaustedCells * TISSUE_RENEWAL;
+    const renewed = Math.min(next.exhaustedCells, Math.floor(next.repairCredit));
+    next.exhaustedCells -= renewed;
+    next.repairCredit -= renewed;
+
+    // Once transmission has been established, the player may always advance,
+    // including after a long offline interval or a temporary dip in viral load.
+    if (next.virions >= VIRAL_TRANSMISSION_VIRIONS &&
+        infectedCells(next) >= VIRAL_TRANSMISSION_CELLS) {
+      next.transmissionReady = true;
+    }
   }
   return next;
 }
@@ -85,6 +105,8 @@ export function validViralState(v) {
   const boundedInt = number => Number.isSafeInteger(number) && number >= 0 && number <= 1_000_000_000;
   const fraction = number => Number.isFinite(number) && number >= 0 && number < 1;
   if (![v.virions, v.producingCells, v.exhaustedCells, ...v.latent].every(boundedInt)) return false;
-  if (![v.contactCredit, v.productionCredit, v.clearanceCredit, v.lossCredit, v.remainder].every(fraction)) return false;
+  if (![v.contactCredit, v.productionCredit, v.clearanceCredit, v.lossCredit, v.remainder,
+    v.repairCredit ?? 0].every(fraction)) return false;
+  if (v.transmissionReady !== undefined && typeof v.transmissionReady !== "boolean") return false;
   return infectedCells(v) + v.exhaustedCells <= VIRAL_CELLS;
 }
